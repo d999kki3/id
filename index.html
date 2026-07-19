@@ -10,7 +10,7 @@
     --ink: #4b5563; --ink2: #6b7280; --muted: #9ca3af; --line: #e5e7eb; --line2: #f3f4f6;
     --bg: #f9fafb; --surface: #ffffff; --topbar-bg: rgba(255, 255, 255, 0.85);
     --green: #10b981; --green-bg: #d1fae5; 
-    --accent: #a78bfa; --accent-bg: #ede9fe; /* Nežna pastelna ljubičasta */
+    --accent: #a78bfa; --accent-bg: #ede9fe;
     --accent-hover: #8b5cf6;
     --mono: 'Geist Mono', monospace; --sans: 'Geist', sans-serif;
   }
@@ -25,13 +25,11 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); font-family: var(--sans); color: var(--ink); min-height: 100vh; overflow-x: hidden; }
 
-  /* Nežni scrollbar */
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 20px; border: 2px solid var(--bg); }
   ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
-  /* Gornja traka sa logovanjem sa desne strane */
   .topbar {
     position: sticky; top: 0; z-index: 100; background: var(--topbar-bg);
     backdrop-filter: blur(16px); border-bottom: 1px solid var(--line);
@@ -52,7 +50,6 @@
 
   .layout { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 64px); }
   
-  /* Sidebar */
   .sidebar { 
     border-right: 1px solid var(--line); padding: 32px 24px; position: sticky; top: 64px; 
     height: calc(100vh - 64px); display: flex; flex-direction: column; gap: 32px; overflow-y: auto;
@@ -63,7 +60,6 @@
   .search { width: 100%; padding: 10px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; font-family: var(--sans); font-size: 13px; color: var(--ink); outline: none; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
   .search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
   
-  /* Filter dugmići */
   .filter-group { display: flex; flex-direction: column; gap: 6px; }
   .fbtn {
     display: flex; align-items: center; justify-content: space-between;
@@ -77,7 +73,6 @@
   .fbtn.active .fbtn-count { background: white; color: var(--accent); }
   [data-theme="dark"] .fbtn.active .fbtn-count { background: rgba(0,0,0,0.2); }
 
-  /* Frakcije u sidebar-u */
   .faction-section { margin-bottom: 16px; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
   .faction-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 12px; }
   
@@ -94,7 +89,6 @@
   .sheriff-del { background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 16px; line-height: 1; transition: 0.2s; }
   .sheriff-del:hover { color: #ef4444; transform: scale(1.1); }
 
-  /* Glavna tabela */
   .main { padding: 32px 40px; overflow-x: auto; }
   .table-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; min-width: 700px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
   .table-head { display: grid; grid-template-columns: 70px 1fr 120px 200px; padding: 14px 24px; border-bottom: 1px solid var(--line); background: var(--bg); }
@@ -113,7 +107,6 @@
   .row-time-zone { display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
   .row-time { font-size: 13px; color: var(--ink2); }
 
-  /* Nežno dugme za brzo dodavanje (+) */
   .quick-add-wrap { position: relative; display: inline-block; }
   .quick-add-btn { background: var(--accent-bg); color: var(--accent); border: none; border-radius: 50%; width: 28px; height: 28px; font-size: 16px; font-weight: 400; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
   .quick-add-btn:hover { background: var(--accent); color: white; transform: rotate(90deg); }
@@ -144,7 +137,6 @@
     <div id="updated-tag">Osvežavanje...</div>
   </div>
   
-  <!-- LOGOVANJE PREBAČENO GORE DESNO -->
   <div class="topbar-right">
     <div id="lock-zone" class="top-login-form">
       <input type="password" id="pass-input" class="top-input" placeholder="Admin lozinka..." />
@@ -220,15 +212,13 @@ document.addEventListener('click', () => {
 
 async function load() {
   try {
-    const [l, h, f] = await Promise.all([
+    const [l, h] = await Promise.all([
       fetch(WORKER), 
-      fetch(WORKER + "history"),
-      fetch(WORKER + "factions")
+      fetch(WORKER + "history")
     ]);
     
     const live = await l.json();
     const hist = await h.json();
-    factionData = await f.json().catch(() => ({ sheriffs: [], pirates: [], blacks: [], mexicans: [] }));
 
     const livePlayers = (live.players || []).map(p => ({...p, online: true}));
     const histPlayers = (hist.players || []).map(p => ({...p, online: false}));
@@ -242,16 +232,25 @@ async function load() {
     document.getElementById("count-online").textContent = livePlayers.length;
     document.getElementById("count-history").textContent = allData.length;
     
+    const now = new Date();
+    document.getElementById("updated-tag").textContent = `Osveženo: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+    
+    render();
+  } catch(e) { console.error(e); }
+}
+
+async function loadFactions() {
+  try {
+    const f = await fetch(WORKER + "factions");
+    factionData = await f.json().catch(() => ({ sheriffs: [], pirates: [], blacks: [], mexicans: [] }));
+    
     document.getElementById("count-sheriffs-btn").textContent = (factionData.sheriffs || []).length;
     document.getElementById("count-pirates-btn").textContent = (factionData.pirates || []).length;
     document.getElementById("count-blacks-btn").textContent = (factionData.blacks || []).length;
     document.getElementById("count-mexicans-btn").textContent = (factionData.mexicans || []).length;
     
-    const now = new Date();
-    document.getElementById("updated-tag").textContent = `Poslednje osvežavanje: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-    
-    render();
     renderFactionPanels();
+    if (['sheriffs', 'pirates', 'blacks', 'mexicans'].includes(currentFilter)) render();
   } catch(e) { console.error(e); }
 }
 
@@ -375,7 +374,7 @@ async function addMember(faction, customName) {
       if(res.ok) {
         const input = document.getElementById(`input-${faction}`);
         if(input) input.value = '';
-        await load();
+        await loadFactions();
       } else {
         alert("Neuspešno! Pogrešna šifra.");
         logoutAdmin();
@@ -392,7 +391,7 @@ async function removeMember(faction, name) {
       body: JSON.stringify({ action: 'remove', faction: faction, name: name, password: savedPassword })
     });
     if(res.ok) {
-      await load();
+      await loadFactions();
     } else {
       alert("Neuspešno! Pogrešna šifra.");
       logoutAdmin();
@@ -449,8 +448,12 @@ document.getElementById('pass-input').addEventListener('keypress', function(e) {
 });
 
 document.getElementById("search").oninput = render;
+
 load();
-setInterval(load, 30000);
+loadFactions();
+
+setInterval(load, 60000);
+setInterval(loadFactions, 300000);
 </script>
 </body>
 </html>
