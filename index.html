@@ -3,135 +3,174 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>UA SVIIII</title>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500;600&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>UA UA</title>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ink: #0f0f0f; --ink2: #3a3a3a; --muted: #9a9a9a; --line: #e8e8e8; --line2: #f0f0f0;
-    --bg: #fafaf8; --surface: #ffffff; --topbar-bg: rgba(250, 250, 248, 0.88);
-    --green: #16a34a; --green-bg: #f0fdf4; --green-border: #bbf7d0; --green-pulse: rgba(22, 163, 74, 0.12);
-    --accent: #2563eb; --accent-bg: #eff6ff; --accent-ring: rgba(37, 99, 235, 0.08);
-    --mono: 'Geist Mono', monospace; --serif: 'Instrument Serif', serif; --sans: 'Geist', sans-serif;
+    --ink: #4b5563; --ink2: #6b7280; --muted: #9ca3af; --line: #e5e7eb; --line2: #f3f4f6;
+    --bg: #f9fafb; --surface: #ffffff; --topbar-bg: rgba(255, 255, 255, 0.85);
+    --green: #10b981; --green-bg: #d1fae5; 
+    --accent: #a78bfa; --accent-bg: #ede9fe; /* Nežna pastelna ljubičasta */
+    --accent-hover: #8b5cf6;
+    --mono: 'Geist Mono', monospace; --sans: 'Geist', sans-serif;
   }
+  
   [data-theme="dark"] {
-    --ink: #ededed; --ink2: #a1a1aa; --muted: #71717a; --line: #27272a; --line2: #18181b;
-    --bg: #09090b; --surface: #121214; --topbar-bg: rgba(9, 9, 11, 0.88);
-    --green: #4ade80; --green-bg: rgba(74, 222, 128, 0.1); --green-border: rgba(74, 222, 128, 0.2);
-    --accent: #60a5fa; --accent-bg: rgba(96, 165, 250, 0.1);
+    --ink: #f3f4f6; --ink2: #d1d5db; --muted: #9ca3af; --line: #374151; --line2: #1f2937;
+    --bg: #111827; --surface: #1f2937; --topbar-bg: rgba(31, 41, 55, 0.85);
+    --green: #34d399; --green-bg: rgba(52, 211, 153, 0.1);
+    --accent: #a78bfa; --accent-bg: rgba(167, 139, 250, 0.15);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); font-family: var(--sans); color: var(--ink); min-height: 100vh; overflow-x: hidden; }
 
+  /* Nežni scrollbar */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 20px; border: 2px solid var(--bg); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  /* Gornja traka sa logovanjem sa desne strane */
   .topbar {
     position: sticky; top: 0; z-index: 100; background: var(--topbar-bg);
-    backdrop-filter: blur(12px); border-bottom: 1px solid var(--line);
-    padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 56px;
+    backdrop-filter: blur(16px); border-bottom: 1px solid var(--line);
+    padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 64px;
   }
-  .logo { font-family: var(--serif); font-size: 22px; font-style: italic; color: var(--ink); }
-  .logo span { color: var(--muted); font-family: var(--mono); font-size: 11px; margin-left: 6px; font-style: normal; }
+  .topbar-left { display: flex; align-items: center; gap: 16px; }
+  .logo { font-family: var(--sans); font-size: 20px; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
+  #updated-tag { font-size: 11px; font-family: var(--sans); color: var(--muted); font-weight: 500; background: var(--line2); padding: 4px 10px; border-radius: 20px; }
 
-  .layout { display: grid; grid-template-columns: 300px 1fr; min-height: calc(100vh - 56px); }
+  .topbar-right { display: flex; align-items: center; }
+  .top-login-form { display: flex; gap: 8px; align-items: center; }
+  .top-input { padding: 8px 14px; border-radius: 20px; border: 1px solid var(--line); background: var(--surface); font-family: var(--sans); font-size: 12px; color: var(--ink); outline: none; transition: 0.2s; width: 140px; }
+  .top-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
+  .top-btn { padding: 8px 16px; border-radius: 20px; background: var(--accent); color: white; border: none; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+  .top-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+  .logout-btn { background: var(--line); color: var(--ink); }
+  .logout-btn:hover { background: #ef4444; color: white; }
+
+  .layout { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 64px); }
   
+  /* Sidebar */
   .sidebar { 
-    border-right: 1px solid var(--line); padding: 24px 20px; position: sticky; top: 56px; 
-    height: calc(100vh - 56px); display: flex; flex-direction: column; gap: 24px; overflow-y: auto;
+    border-right: 1px solid var(--line); padding: 32px 24px; position: sticky; top: 64px; 
+    height: calc(100vh - 64px); display: flex; flex-direction: column; gap: 32px; overflow-y: auto;
   }
-  .sidebar-label { font-family: var(--mono); font-size: 9px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding-bottom: 6px; border-bottom: 1px solid var(--line2); margin-bottom: 8px; }
+  .sidebar-label { font-family: var(--sans); font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--muted); letter-spacing: 0.05em; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .sidebar-label::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 
-  .search { width: 100%; padding: 8px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; font-family: var(--sans); font-size: 13px; color: var(--ink); outline: none; margin-bottom: 4px; }
+  .search { width: 100%; padding: 10px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; font-family: var(--sans); font-size: 13px; color: var(--ink); outline: none; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+  .search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
   
-  /* Filter Buttons */
-  .filter-group { display: flex; flex-direction: column; gap: 4px; }
+  /* Filter dugmići */
+  .filter-group { display: flex; flex-direction: column; gap: 6px; }
   .fbtn {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 12px; border-radius: 8px; border: 1px solid transparent;
+    padding: 10px 14px; border-radius: 12px; border: 1px solid transparent;
     background: transparent; font-family: var(--sans); font-size: 13px; font-weight: 500;
-    color: var(--ink2); cursor: pointer; text-align: left; transition: 0.2s;
+    color: var(--ink2); cursor: pointer; text-align: left; transition: all 0.2s;
   }
-  .fbtn:hover { background: var(--line2); }
-  .fbtn.active { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-bg); }
-  .fbtn-count { font-family: var(--mono); font-size: 10px; opacity: 0.7; }
+  .fbtn:hover { background: var(--surface); border-color: var(--line); }
+  .fbtn.active { background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+  .fbtn-count { font-family: var(--mono); font-size: 11px; opacity: 0.8; background: var(--line2); padding: 2px 6px; border-radius: 10px; }
+  .fbtn.active .fbtn-count { background: white; color: var(--accent); }
+  [data-theme="dark"] .fbtn.active .fbtn-count { background: rgba(0,0,0,0.2); }
 
   /* Frakcije u sidebar-u */
-  .faction-section { margin-bottom: 12px; padding: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; width: 100%; }
-  .faction-title { font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 8px; text-transform: capitalize; }
+  .faction-section { margin-bottom: 16px; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+  .faction-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 12px; }
   
-  .sheriff-form { display: flex; gap: 6px; margin-bottom: 8px; width: 100%; }
-  .sheriff-input { flex: 1; min-width: 0; padding: 6px 10px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; font-family: var(--sans); font-size: 12px; color: var(--ink); outline: none; }
-  .sheriff-btn { flex-shrink: 0; padding: 6px 12px; background: var(--accent); color: #fff; border: none; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; }
-  .sheriff-btn:hover { opacity: 0.9; }
+  .sheriff-form { display: flex; gap: 8px; margin-bottom: 12px; }
+  .sheriff-input { flex: 1; min-width: 0; padding: 8px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; font-family: var(--sans); font-size: 12px; outline: none; transition: 0.2s; }
+  .sheriff-input:focus { border-color: var(--accent); }
+  .sheriff-btn { width: 32px; height: 32px; flex-shrink: 0; background: var(--accent-bg); color: var(--accent); border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+  .sheriff-btn:hover { background: var(--accent); color: white; }
   
-  .sheriff-list { display: flex; flex-direction: column; gap: 4px; max-height: 120px; overflow-y: auto; }
-  .sheriff-item { display: flex; align-items: center; justify-content: space-between; background: var(--bg); border: 1px solid var(--line2); padding: 5px 8px; border-radius: 4px; font-size: 11px; }
-  .sheriff-name { font-weight: 500; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 160px; }
-  .sheriff-del { background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 12px; padding: 0 2px; line-height: 1; }
-  .sheriff-del:hover { color: #ef4444; }
+  .sheriff-list { display: flex; flex-direction: column; gap: 6px; max-height: 140px; overflow-y: auto; padding-right: 4px; }
+  .sheriff-item { display: flex; align-items: center; justify-content: space-between; background: var(--bg); padding: 8px 12px; border-radius: 10px; font-size: 12px; border: 1px solid transparent; transition: 0.2s; }
+  .sheriff-item:hover { border-color: var(--line); }
+  .sheriff-name { font-weight: 500; color: var(--ink); }
+  .sheriff-del { background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 16px; line-height: 1; transition: 0.2s; }
+  .sheriff-del:hover { color: #ef4444; transform: scale(1.1); }
 
-  .admin-lock-zone { display: flex; flex-direction: column; gap: 6px; width: 100%; }
-  .login-link { font-size: 11px; color: var(--muted); cursor: pointer; text-decoration: underline; text-align: right; display: block; }
-  .login-link:hover { color: var(--accent); }
-
-  /* Stilovi za glavnu tabelu */
-  .main { padding: 28px 32px; overflow-x: auto; }
-  .table-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; min-width: 700px; }
-  .table-head { display: grid; grid-template-columns: 60px 1fr 120px 200px; padding: 10px 20px; border-bottom: 1px solid var(--line); background: var(--bg); }
-  .th { font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; }
+  /* Glavna tabela */
+  .main { padding: 32px 40px; overflow-x: auto; }
+  .table-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; min-width: 700px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+  .table-head { display: grid; grid-template-columns: 70px 1fr 120px 200px; padding: 14px 24px; border-bottom: 1px solid var(--line); background: var(--bg); }
+  .th { font-family: var(--sans); font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
   .th.right { text-align: right; }
 
-  /* Redovi i brze admin akcije unutar tabele */
-  .row { display: grid; grid-template-columns: 60px 1fr 120px 200px; padding: 12px 20px; border-bottom: 1px solid var(--line2); align-items: center; }
-  .row:hover { background: var(--bg); }
-  .row-id { font-family: var(--mono); font-size: 11px; color: var(--muted); }
-  .row-name { font-size: 13px; font-weight: 500; color: var(--ink); }
-  .badge-online { color: var(--green); font-family: var(--mono); font-size: 10px; font-weight: 600; text-transform: uppercase; }
-  .row-time-zone { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+  .row { display: grid; grid-template-columns: 70px 1fr 120px 200px; padding: 16px 24px; border-bottom: 1px solid var(--line2); align-items: center; transition: all 0.2s; }
+  .row:last-child { border-bottom: none; }
+  .row:hover { background: var(--bg); transform: translateX(2px); }
+  .row-id { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .row-name { font-size: 14px; font-weight: 500; color: var(--ink); }
+  
+  .badge-online { display: inline-flex; align-items: center; gap: 6px; color: var(--green); font-size: 11px; font-weight: 600; background: var(--green-bg); padding: 4px 10px; border-radius: 20px; }
+  .badge-online::before { content: ""; width: 6px; height: 6px; background: var(--green); border-radius: 50%; box-shadow: 0 0 6px var(--green); }
+  
+  .row-time-zone { display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
   .row-time { font-size: 13px; color: var(--ink2); }
 
-  /* Brzi meni za dodavanje igrača sa tabele */
+  /* Nežno dugme za brzo dodavanje (+) */
   .quick-add-wrap { position: relative; display: inline-block; }
-  .quick-add-btn { background: var(--accent); color: white; border: none; border-radius: 4px; width: 22px; height: 22px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
-  .quick-add-btn:hover { opacity: 0.9; }
+  .quick-add-btn { background: var(--accent-bg); color: var(--accent); border: none; border-radius: 50%; width: 28px; height: 28px; font-size: 16px; font-weight: 400; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .quick-add-btn:hover { background: var(--accent); color: white; transform: rotate(90deg); }
   
   .faction-menu { 
-    display: none; position: absolute; right: 0; top: 26px; background: var(--surface); 
-    border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); 
-    z-index: 10; min-width: 110px; overflow: hidden;
+    display: none; position: absolute; right: 0; top: 34px; background: var(--surface); 
+    border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+    z-index: 10; min-width: 130px; overflow: hidden; padding: 6px;
   }
   .faction-menu button { 
-    width: 100%; padding: 8px 10px; background: transparent; border: none; 
-    color: var(--ink); font-size: 11px; text-align: left; cursor: pointer; font-weight: 500;
+    width: 100%; padding: 10px 12px; background: transparent; border: none; 
+    color: var(--ink); border-radius: 8px; font-size: 12px; text-align: left; cursor: pointer; font-family: var(--sans); font-weight: 500; transition: 0.1s;
   }
-  .faction-menu button:hover { background: var(--accent-bg); color: var(--accent); }
+  .faction-menu button:hover { background: var(--accent-bg); color: var(--accent); padding-left: 16px; }
 
   @media (max-width: 768px) {
     .layout { grid-template-columns: 1fr; }
-    .sidebar { position: static; height: auto; border-right: none; }
+    .sidebar { position: static; height: auto; border-right: none; padding: 20px; }
+    .topbar { padding: 0 20px; flex-direction: column; height: auto; padding-top: 12px; padding-bottom: 12px; gap: 12px; }
   }
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <div class="logo">UAAA<span>SVIIIII</span></div>
-  <div id="updated-tag" style="font-size: 10px; font-family: var(--mono); color: var(--muted);">Osvežavanje...</div>
+  <div class="topbar-left">
+    <div class="logo">UA UA</div>
+    <div id="updated-tag">Osvežavanje...</div>
+  </div>
+  
+  <!-- LOGOVANJE PREBAČENO GORE DESNO -->
+  <div class="topbar-right">
+    <div id="lock-zone" class="top-login-form">
+      <input type="password" id="pass-input" class="top-input" placeholder="Admin lozinka..." />
+      <button onclick="loginAdmin()" class="top-btn">Prijavi se</button>
+    </div>
+    <div id="logout-zone" style="display: none;">
+      <button onclick="logoutAdmin()" class="top-btn logout-btn">Odjavi se</button>
+    </div>
+  </div>
 </div>
 
 <div class="layout">
   <aside class="sidebar">
     <div>
-      <div class="sidebar-label">Pretraga</div>
+      <div class="sidebar-label">Pretraga igrača</div>
       <input type="text" id="search" class="search" placeholder="Ime ili ID..." />
     </div>
 
     <div>
-      <div class="sidebar-label">Prikaz</div>
+      <div class="sidebar-label">Prikaz listi</div>
       <div class="filter-group">
         <button class="fbtn active" onclick="setFilter('online')" id="btn-online">
           Na mreži <span class="fbtn-count" id="count-online">0</span>
         </button>
         <button class="fbtn" onclick="setFilter('history')" id="btn-history">
-          Poslednji put viđeni <span class="fbtn-count" id="count-history">0</span>
+          Svi viđeni <span class="fbtn-count" id="count-history">0</span>
         </button>
         <button class="fbtn" onclick="setFilter('sheriffs')" id="btn-sheriffs">
           Šerifi <span class="fbtn-count" id="count-sheriffs-btn">0</span>
@@ -151,17 +190,6 @@
     <div>
       <div class="sidebar-label" id="panel-label">Frakcije (Pregled)</div>
       <div id="faction-lists-container"></div>
-
-      <div id="lock-zone" class="admin-lock-zone" style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line);">
-        <div class="sheriff-form">
-          <input type="password" id="pass-input" class="sheriff-input" placeholder="Lozinka za izmene..." />
-          <button onclick="loginAdmin()" class="sheriff-btn">→</button>
-        </div>
-      </div>
-      
-      <div id="logout-zone" style="display: none; text-align: right; margin-top: 8px;">
-        <span onclick="logoutAdmin()" class="login-link">Odjavi se</span>
-      </div>
     </div>
   </aside>
 
@@ -169,7 +197,7 @@
     <div class="table-wrap">
       <div class="table-head">
         <div class="th">ID</div>
-        <div class="th">Ime</div>
+        <div class="th">Ime igrača</div>
         <div class="th">Status</div>
         <div class="th right">Vreme</div>
       </div>
@@ -219,7 +247,8 @@ async function load() {
     document.getElementById("count-blacks-btn").textContent = (factionData.blacks || []).length;
     document.getElementById("count-mexicans-btn").textContent = (factionData.mexicans || []).length;
     
-    document.getElementById("updated-tag").textContent = `Ažurirano: ${new Date().toLocaleTimeString('sr-RS')}`;
+    const now = new Date();
+    document.getElementById("updated-tag").textContent = `Poslednje osvežavanje: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
     
     render();
     renderFactionPanels();
@@ -274,13 +303,13 @@ function render() {
   }
 
   body.innerHTML = list.map(p => `
-    <div class="row" onclick="navigator.clipboard.writeText('${p.name}')" style="cursor: pointer; ${['sheriffs', 'pirates', 'blacks', 'mexicans'].includes(currentFilter) && !p.online ? 'opacity: 0.6;' : ''}">
+    <div class="row" onclick="navigator.clipboard.writeText('${p.name}')" style="cursor: pointer; ${['sheriffs', 'pirates', 'blacks', 'mexicans'].includes(currentFilter) && !p.online ? 'opacity: 0.5;' : ''}">
       <div class="row-id">${p.id || "—"}</div>
       <div class="row-name">${p.name}</div>
-      <div class="row-status">${p.online ? '<span class="badge-online">● Online</span>' : '<span style="color:var(--muted)">Offline</span>'}</div>
+      <div class="row-status">${p.online ? '<span class="badge-online">Online</span>' : '<span style="color:var(--muted); font-size:11px; font-weight:500;">Offline</span>'}</div>
       <div class="row-time-zone" onclick="event.stopPropagation()">
         <div class="row-time">
-          ${p.online ? '<span style="color:var(--green)">U igri</span>' : `<span>${timeAgo(p.lastSeen)}</span>`}
+          ${p.online ? '<span style="color:var(--green); font-weight:500;">U igri</span>' : `<span>${timeAgo(p.lastSeen)}</span>`}
         </div>
         ${hasPass ? `
           <div class="quick-add-wrap">
@@ -314,7 +343,7 @@ function loginAdmin() {
     passInput.value = '';
     document.getElementById('lock-zone').style.display = 'none';
     document.getElementById('logout-zone').style.display = 'block';
-    document.getElementById('panel-label').textContent = "Upravljanje Frakcijama";
+    document.getElementById('panel-label').textContent = "Upravljanje listama";
     render();
     renderFactionPanels();
   }
@@ -322,7 +351,7 @@ function loginAdmin() {
 
 function logoutAdmin() {
   savedPassword = "";
-  document.getElementById('lock-zone').style.display = 'block';
+  document.getElementById('lock-zone').style.display = 'flex';
   document.getElementById('logout-zone').style.display = 'none';
   document.getElementById('panel-label').textContent = "Frakcije (Pregled)";
   render();
@@ -331,8 +360,6 @@ function logoutAdmin() {
 
 async function addMember(faction, customName) {
   let name = customName;
-  
-  // Ako ime nije prosleđeno sa tabele (+), uzmi ga iz ručnog input polja u sidebar panelu
   if (!name) {
     const input = document.getElementById(`input-${faction}`);
     name = input.value.trim();
@@ -389,10 +416,9 @@ function renderFactionPanels() {
     return `
       <div class="faction-section">
         <div class="faction-title">${f.name}</div>
-        <!-- Ručni unos se pojavljuje u panelu kada si admin -->
         ${hasPass ? `
           <div class="sheriff-form">
-            <input type="text" id="input-${f.id}" class="sheriff-input" placeholder="Dodaj..." />
+            <input type="text" id="input-${f.id}" class="sheriff-input" placeholder="Upiši ime..." />
             <button onclick="addMember('${f.id}', null)" class="sheriff-btn">+</button>
           </div>
         ` : ''}
@@ -403,7 +429,7 @@ function renderFactionPanels() {
               ${hasPass ? `<button onclick="removeMember('${f.id}', '${mName}')" class="sheriff-del">&times;</button>` : ''}
             </div>
           `).join("")}
-          ${list.length === 0 ? '<span style="font-size:10px; color:var(--muted)">Lista je prazna</span>' : ''}
+          ${list.length === 0 ? '<span style="font-size:11px; color:var(--muted)">Nema upisanih igrača</span>' : ''}
         </div>
       </div>
     `;
