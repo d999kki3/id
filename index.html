@@ -212,13 +212,15 @@ document.addEventListener('click', () => {
 
 async function load() {
   try {
-    const [l, h] = await Promise.all([
+    const [l, h, f] = await Promise.all([
       fetch(WORKER), 
-      fetch(WORKER + "history")
+      fetch(WORKER + "history"),
+      fetch(WORKER + "factions")
     ]);
     
     const live = await l.json();
     const hist = await h.json();
+    factionData = await f.json().catch(() => ({ sheriffs: [], pirates: [], blacks: [], mexicans: [] }));
 
     const livePlayers = (live.players || []).map(p => ({...p, online: true}));
     const histPlayers = (hist.players || []).map(p => ({...p, online: false}));
@@ -232,25 +234,16 @@ async function load() {
     document.getElementById("count-online").textContent = livePlayers.length;
     document.getElementById("count-history").textContent = allData.length;
     
-    const now = new Date();
-    document.getElementById("updated-tag").textContent = `Osveženo: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-    
-    render();
-  } catch(e) { console.error(e); }
-}
-
-async function loadFactions() {
-  try {
-    const f = await fetch(WORKER + "factions");
-    factionData = await f.json().catch(() => ({ sheriffs: [], pirates: [], blacks: [], mexicans: [] }));
-    
     document.getElementById("count-sheriffs-btn").textContent = (factionData.sheriffs || []).length;
     document.getElementById("count-pirates-btn").textContent = (factionData.pirates || []).length;
     document.getElementById("count-blacks-btn").textContent = (factionData.blacks || []).length;
     document.getElementById("count-mexicans-btn").textContent = (factionData.mexicans || []).length;
     
+    const now = new Date();
+    document.getElementById("updated-tag").textContent = `Osveženo: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+    
+    render();
     renderFactionPanels();
-    if (['sheriffs', 'pirates', 'blacks', 'mexicans'].includes(currentFilter)) render();
   } catch(e) { console.error(e); }
 }
 
@@ -374,7 +367,7 @@ async function addMember(faction, customName) {
       if(res.ok) {
         const input = document.getElementById(`input-${faction}`);
         if(input) input.value = '';
-        await loadFactions();
+        await load();
       } else {
         alert("Neuspešno! Pogrešna šifra.");
         logoutAdmin();
@@ -391,7 +384,7 @@ async function removeMember(faction, name) {
       body: JSON.stringify({ action: 'remove', faction: faction, name: name, password: savedPassword })
     });
     if(res.ok) {
-      await loadFactions();
+      await load();
     } else {
       alert("Neuspešno! Pogrešna šifra.");
       logoutAdmin();
@@ -422,12 +415,20 @@ function renderFactionPanels() {
           </div>
         ` : ''}
         <div class="sheriff-list">
-          ${list.map(mName => `
-            <div class="sheriff-item">
-              <span class="sheriff-name">${mName}</span>
-              ${hasPass ? `<button onclick="removeMember('${f.id}', '${mName}')" class="sheriff-del">&times;</button>` : ''}
-            </div>
-          `).join("")}
+          ${list.map(mName => {
+            const match = allData.find(p => p.name.toLowerCase() === mName.toLowerCase());
+            const isOnline = match ? match.online : false;
+            
+            return `
+              <div class="sheriff-item" style="${!isOnline ? 'opacity: 0.6;' : ''}">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  ${isOnline ? '<div style="width: 6px; height: 6px; background: var(--green); border-radius: 50%; box-shadow: 0 0 6px var(--green);"></div>' : ''}
+                  <span class="sheriff-name" style="${isOnline ? 'color: var(--green); font-weight: 600;' : ''}">${mName}</span>
+                </div>
+                ${hasPass ? `<button onclick="removeMember('${f.id}', '${mName}')" class="sheriff-del">&times;</button>` : ''}
+              </div>
+            `;
+          }).join("")}
           ${list.length === 0 ? '<span style="font-size:11px; color:var(--muted)">Nema upisanih igrača</span>' : ''}
         </div>
       </div>
@@ -450,10 +451,7 @@ document.getElementById('pass-input').addEventListener('keypress', function(e) {
 document.getElementById("search").oninput = render;
 
 load();
-loadFactions();
-
-setInterval(load, 60000);
-setInterval(loadFactions, 300000);
+setInterval(load, 20000);
 </script>
 </body>
 </html>
