@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="sr" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>UA SVIIII</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist+Mono:wght@400;500;600&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0f0f; --ink2: #3a3a3a; --muted: #9a9a9a; --line: #e8e8e8; --line2: #f0f0f0;
+    --bg: #fafaf8; --surface: #ffffff; --topbar-bg: rgba(250, 250, 248, 0.88);
+    --green: #16a34a; --green-bg: #f0fdf4; --green-border: #bbf7d0; --green-pulse: rgba(22, 163, 74, 0.12);
+    --accent: #2563eb; --accent-bg: #eff6ff; --accent-ring: rgba(37, 99, 235, 0.08);
+    --mono: 'Geist Mono', monospace; --serif: 'Instrument Serif', serif; --sans: 'Geist', sans-serif;
+  }
+  [data-theme="dark"] {
+    --ink: #ededed; --ink2: #a1a1aa; --muted: #71717a; --line: #27272a; --line2: #18181b;
+    --bg: #09090b; --surface: #121214; --topbar-bg: rgba(9, 9, 11, 0.88);
+    --green: #4ade80; --green-bg: rgba(74, 222, 128, 0.1); --green-border: rgba(74, 222, 128, 0.2);
+    --accent: #60a5fa; --accent-bg: rgba(96, 165, 250, 0.1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); font-family: var(--sans); color: var(--ink); min-height: 100vh; overflow-x: hidden; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 100; background: var(--topbar-bg);
+    backdrop-filter: blur(12px); border-bottom: 1px solid var(--line);
+    padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 56px;
+  }
+  .logo { font-family: var(--serif); font-size: 22px; font-style: italic; color: var(--ink); }
+  .logo span { color: var(--muted); font-family: var(--mono); font-size: 11px; margin-left: 6px; font-style: normal; }
+
+  .layout { display: grid; grid-template-columns: 300px 1fr; min-height: calc(100vh - 56px); }
+  
+  .sidebar { 
+    border-right: 1px solid var(--line); padding: 24px 20px; position: sticky; top: 56px; 
+    height: calc(100vh - 56px); display: flex; flex-direction: column; gap: 24px; overflow-y: auto;
+  }
+  .sidebar-label { font-family: var(--mono); font-size: 9px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding-bottom: 6px; border-bottom: 1px solid var(--line2); margin-bottom: 8px; }
+
+  .search { width: 100%; padding: 8px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; font-family: var(--sans); font-size: 13px; color: var(--ink); outline: none; margin-bottom: 4px; }
+  
+  /* Filter Buttons */
+  .filter-group { display: flex; flex-direction: column; gap: 4px; }
+  .fbtn {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px; border-radius: 8px; border: 1px solid transparent;
+    background: transparent; font-family: var(--sans); font-size: 13px; font-weight: 500;
+    color: var(--ink2); cursor: pointer; text-align: left; transition: 0.2s;
+  }
+  .fbtn:hover { background: var(--line2); }
+  .fbtn.active { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-bg); }
+  .fbtn-count { font-family: var(--mono); font-size: 10px; opacity: 0.7; }
+
+  /* Frakcije u sidebar-u */
+  .faction-section { margin-bottom: 12px; padding: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; width: 100%; }
+  .faction-title { font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 8px; text-transform: capitalize; }
+  
+  .sheriff-form { display: flex; gap: 6px; margin-bottom: 8px; width: 100%; }
+  .sheriff-input { flex: 1; min-width: 0; padding: 6px 10px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; font-family: var(--sans); font-size: 12px; color: var(--ink); outline: none; }
+  .sheriff-btn { flex-shrink: 0; padding: 6px 12px; background: var(--accent); color: #fff; border: none; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; }
+  .sheriff-btn:hover { opacity: 0.9; }
+  
+  .sheriff-list { display: flex; flex-direction: column; gap: 4px; max-height: 120px; overflow-y: auto; }
+  .sheriff-item { display: flex; align-items: center; justify-content: space-between; background: var(--bg); border: 1px solid var(--line2); padding: 5px 8px; border-radius: 4px; font-size: 11px; }
+  .sheriff-name { font-weight: 500; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; max-width: 160px; }
+  .sheriff-del { background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 12px; padding: 0 2px; line-height: 1; }
+  .sheriff-del:hover { color: #ef4444; }
+
+  .admin-lock-zone { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+  .login-link { font-size: 11px; color: var(--muted); cursor: pointer; text-decoration: underline; text-align: right; display: block; }
+  .login-link:hover { color: var(--accent); }
+
+  /* Stilovi za glavnu tabelu */
+  .main { padding: 28px 32px; overflow-x: auto; }
+  .table-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; min-width: 700px; }
+  .table-head { display: grid; grid-template-columns: 60px 1fr 120px 200px; padding: 10px 20px; border-bottom: 1px solid var(--line); background: var(--bg); }
+  .th { font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; }
+  .th.right { text-align: right; }
+
+  /* Redovi i brze admin akcije unutar tabele */
+  .row { display: grid; grid-template-columns: 60px 1fr 120px 200px; padding: 12px 20px; border-bottom: 1px solid var(--line2); align-items: center; }
+  .row:hover { background: var(--bg); }
+  .row-id { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .row-name { font-size: 13px; font-weight: 500; color: var(--ink); }
+  .badge-online { color: var(--green); font-family: var(--mono); font-size: 10px; font-weight: 600; text-transform: uppercase; }
+  .row-time-zone { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+  .row-time { font-size: 13px; color: var(--ink2); }
+
+  /* Brzi meni za dodavanje igrača sa tabele */
+  .quick-add-wrap { position: relative; display: inline-block; }
+  .quick-add-btn { background: var(--accent); color: white; border: none; border-radius: 4px; width: 22px; height: 22px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
+  .quick-add-btn:hover { opacity: 0.9; }
+  
+  .faction-menu { 
+    display: none; position: absolute; right: 0; top: 26px; background: var(--surface); 
+    border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); 
+    z-index: 10; min-width: 110px; overflow: hidden;
+  }
+  .faction-menu button { 
+    width: 100%; padding: 8px 10px; background: transparent; border: none; 
+    color: var(--ink); font-size: 11px; text-align: left; cursor: pointer; font-weight: 500;
+  }
+  .faction-menu button:hover { background: var(--accent-bg); color: var(--accent); }
+
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: static; height: auto; border-right: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">UAAA<span>SVIIIII</span></div>
+  <div id="updated-tag" style="font-size: 10px; font-family: var(--mono); color: var(--muted);">Osvežavanje...</div>
+</div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div>
+      <div class="sidebar-label">Pretraga</div>
+      <input type="text" id="search" class="search" placeholder="Ime ili ID..." />
+    </div>
+
+    <div>
+      <div class="sidebar-label">Prikaz</div>
+      <div class="filter-group">
+        <button class="fbtn active" onclick="setFilter('online')" id="btn-online">
+          Na mreži <span class="fbtn-count" id="count-online">0</span>
+        </button>
+        <button class="fbtn" onclick="setFilter('history')" id="btn-history">
+          Poslednji put viđeni <span class="fbtn-count" id="count-history">0</span>
+        </button>
+        <button class="fbtn" onclick="setFilter('sheriffs')" id="btn-sheriffs">
+          Šerifi <span class="fbtn-count" id="count-sheriffs-btn">0</span>
+        </button>
+        <button class="fbtn" onclick="setFilter('pirates')" id="btn-pirates">
+          Pirati <span class="fbtn-count" id="count-pirates-btn">0</span>
+        </button>
+        <button class="fbtn" onclick="setFilter('blacks')" id="btn-blacks">
+          Crnci <span class="fbtn-count" id="count-blacks-btn">0</span>
+        </button>
+        <button class="fbtn" onclick="setFilter('mexicans')" id="btn-mexicans">
+          Meksikanci <span class="fbtn-count" id="count-mexicans-btn">0</span>
+        </button>
+      </div>
+    </div>
+
+    <div>
+      <div class="sidebar-label" id="panel-label">Frakcije (Pregled)</div>
+      <div id="faction-lists-container"></div>
+
+      <div id="lock-zone" class="admin-lock-zone" style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line);">
+        <div class="sheriff-form">
+          <input type="password" id="pass-input" class="sheriff-input" placeholder="Lozinka za izmene..." />
+          <button onclick="loginAdmin()" class="sheriff-btn">→</button>
+        </div>
+      </div>
+      
+      <div id="logout-zone" style="display: none; text-align: right; margin-top: 8px;">
+        <span onclick="logoutAdmin()" class="login-link">Odjavi se</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="table-wrap">
+      <div class="table-head">
+        <div class="th">ID</div>
+        <div class="th">Ime</div>
+        <div class="th">Status</div>
+        <div class="th right">Vreme</div>
+      </div>
+      <div id="table-body"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+const WORKER = "https://ancient-violet-3dbc.dizzzkliper.workers.dev/";
+
+let allData = [];
+let currentFilter = 'online'; 
+let factionData = { sheriffs: [], pirates: [], blacks: [], mexicans: [] };
+let savedPassword = "";
+
+document.addEventListener('click', () => {
+  document.querySelectorAll('.faction-menu').forEach(m => m.style.display = 'none');
+});
+
+async function load() {
+  try {
+    const [l, h, f] = await Promise.all([
+      fetch(WORKER), 
+      fetch(WORKER + "history"),
+      fetch(WORKER + "factions")
+    ]);
+    
+    const live = await l.json();
+    const hist = await h.json();
+    factionData = await f.json().catch(() => ({ sheriffs: [], pirates: [], blacks: [], mexicans: [] }));
+
+    const livePlayers = (live.players || []).map(p => ({...p, online: true}));
+    const histPlayers = (hist.players || []).map(p => ({...p, online: false}));
+
+    const merged = {};
+    livePlayers.forEach(p => merged[p.name] = p);
+    histPlayers.forEach(p => { if(!merged[p.name]) merged[p.name] = p; });
+
+    allData = Object.values(merged);
+    
+    document.getElementById("count-online").textContent = livePlayers.length;
+    document.getElementById("count-history").textContent = allData.length;
+    
+    document.getElementById("count-sheriffs-btn").textContent = (factionData.sheriffs || []).length;
+    document.getElementById("count-pirates-btn").textContent = (factionData.pirates || []).length;
+    document.getElementById("count-blacks-btn").textContent = (factionData.blacks || []).length;
+    document.getElementById("count-mexicans-btn").textContent = (factionData.mexicans || []).length;
+    
+    document.getElementById("updated-tag").textContent = `Ažurirano: ${new Date().toLocaleTimeString('sr-RS')}`;
+    
+    render();
+    renderFactionPanels();
+  } catch(e) { console.error(e); }
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  const filters = ['online', 'history', 'sheriffs', 'pirates', 'blacks', 'mexicans'];
+  filters.forEach(filter => {
+    document.getElementById(`btn-${filter}`).classList.toggle('active', f === filter);
+  });
+  render();
+}
+
+function timeAgo(ts) {
+  if (!ts) return "—";
+  const m = Math.floor((Date.now() - ts) / 60000);
+  if (m < 1) return "Sada";
+  if (m < 60) return `${m}m`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ${m%60}m`;
+  return `${Math.floor(h/24)}d`;
+}
+
+function render() {
+  const q = document.getElementById("search").value.toLowerCase();
+  const body = document.getElementById("table-body");
+  const hasPass = savedPassword !== "";
+  
+  let list = allData.filter(p => p.name.toLowerCase().includes(q) || String(p.id || "").includes(q));
+
+  if (currentFilter === 'online') {
+    list = list.filter(p => p.online).sort((a,b) => (parseInt(a.id)||0) - (parseInt(b.id)||0));
+  } else if (currentFilter === 'history') {
+    list = list.sort((a,b) => (b.lastSeen || 0) - (a.lastSeen || 0));
+  } else {
+    let currentFactionList = factionData[currentFilter] || [];
+    let formattedList = currentFactionList.map(name => {
+      const found = allData.find(p => p.name.toLowerCase() === name.toLowerCase());
+      return found ? found : { name: name, id: "—", online: false, lastSeen: 0 };
+    });
+
+    if (q) {
+      formattedList = formattedList.filter(p => p.name.toLowerCase().includes(q) || String(p.id || "").includes(q));
+    }
+
+    list = formattedList.sort((a, b) => {
+      if (a.online === b.online) return (b.lastSeen || 0) - (a.lastSeen || 0);
+      return a.online ? -1 : 1;
+    });
+  }
+
+  body.innerHTML = list.map(p => `
+    <div class="row" onclick="navigator.clipboard.writeText('${p.name}')" style="cursor: pointer; ${['sheriffs', 'pirates', 'blacks', 'mexicans'].includes(currentFilter) && !p.online ? 'opacity: 0.6;' : ''}">
+      <div class="row-id">${p.id || "—"}</div>
+      <div class="row-name">${p.name}</div>
+      <div class="row-status">${p.online ? '<span class="badge-online">● Online</span>' : '<span style="color:var(--muted)">Offline</span>'}</div>
+      <div class="row-time-zone" onclick="event.stopPropagation()">
+        <div class="row-time">
+          ${p.online ? '<span style="color:var(--green)">U igri</span>' : `<span>${timeAgo(p.lastSeen)}</span>`}
+        </div>
+        ${hasPass ? `
+          <div class="quick-add-wrap">
+            <button class="quick-add-btn" onclick="toggleMenu(event, '${p.name}')">+</button>
+            <div id="menu-${p.name}" class="faction-menu">
+              <button onclick="addMember('sheriffs', '${p.name}')">Šerifi</button>
+              <button onclick="addMember('pirates', '${p.name}')">Pirati</button>
+              <button onclick="addMember('blacks', '${p.name}')">Crnci</button>
+              <button onclick="addMember('mexicans', '${p.name}')">Meksikanci</button>
+            </div>
+          </div>
+        ` : ''}
+      </div>
+    </div>
+  `).join("");
+}
+
+function toggleMenu(e, name) {
+  e.stopPropagation();
+  document.querySelectorAll('.faction-menu').forEach(m => {
+    if(m.id !== 'menu-' + name) m.style.display = 'none';
+  });
+  const menu = document.getElementById('menu-' + name);
+  menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+}
+
+function loginAdmin() {
+  const passInput = document.getElementById('pass-input');
+  if (passInput.value.trim() !== "") {
+    savedPassword = passInput.value;
+    passInput.value = '';
+    document.getElementById('lock-zone').style.display = 'none';
+    document.getElementById('logout-zone').style.display = 'block';
+    document.getElementById('panel-label').textContent = "Upravljanje Frakcijama";
+    render();
+    renderFactionPanels();
+  }
+}
+
+function logoutAdmin() {
+  savedPassword = "";
+  document.getElementById('lock-zone').style.display = 'block';
+  document.getElementById('logout-zone').style.display = 'none';
+  document.getElementById('panel-label').textContent = "Frakcije (Pregled)";
+  render();
+  renderFactionPanels();
+}
+
+async function addMember(faction, customName) {
+  let name = customName;
+  
+  // Ako ime nije prosleđeno sa tabele (+), uzmi ga iz ručnog input polja u sidebar panelu
+  if (!name) {
+    const input = document.getElementById(`input-${faction}`);
+    name = input.value.trim();
+  }
+
+  if (name && !(factionData[faction] || []).some(s => s.toLowerCase() === name.toLowerCase())) {
+    try {
+      const res = await fetch(WORKER + "factions", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'add', faction: faction, name: name, password: savedPassword })
+      });
+      if(res.ok) {
+        const input = document.getElementById(`input-${faction}`);
+        if(input) input.value = '';
+        await load();
+      } else {
+        alert("Neuspešno! Pogrešna šifra.");
+        logoutAdmin();
+      }
+    } catch(e) { console.error(e); }
+  }
+}
+
+async function removeMember(faction, name) {
+  try {
+    const res = await fetch(WORKER + "factions", {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'remove', faction: faction, name: name, password: savedPassword })
+    });
+    if(res.ok) {
+      await load();
+    } else {
+      alert("Neuspešno! Pogrešna šifra.");
+      logoutAdmin();
+    }
+  } catch(e) { console.error(e); }
+}
+
+function renderFactionPanels() {
+  const container = document.getElementById('faction-lists-container');
+  const hasPass = savedPassword !== "";
+  
+  const factions = [
+    { id: 'sheriffs', name: 'Šerifi' },
+    { id: 'pirates', name: 'Pirati' },
+    { id: 'blacks', name: 'Crnci' },
+    { id: 'mexicans', name: 'Meksikanci' }
+  ];
+
+  container.innerHTML = factions.map(f => {
+    const list = factionData[f.id] || [];
+    return `
+      <div class="faction-section">
+        <div class="faction-title">${f.name}</div>
+        <!-- Ručni unos se pojavljuje u panelu kada si admin -->
+        ${hasPass ? `
+          <div class="sheriff-form">
+            <input type="text" id="input-${f.id}" class="sheriff-input" placeholder="Dodaj..." />
+            <button onclick="addMember('${f.id}', null)" class="sheriff-btn">+</button>
+          </div>
+        ` : ''}
+        <div class="sheriff-list">
+          ${list.map(mName => `
+            <div class="sheriff-item">
+              <span class="sheriff-name">${mName}</span>
+              ${hasPass ? `<button onclick="removeMember('${f.id}', '${mName}')" class="sheriff-del">&times;</button>` : ''}
+            </div>
+          `).join("")}
+          ${list.length === 0 ? '<span style="font-size:10px; color:var(--muted)">Lista je prazna</span>' : ''}
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  if (hasPass) {
+    factions.forEach(f => {
+      document.getElementById(`input-${f.id}`).addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') addMember(f.id, null);
+      });
+    });
+  }
+}
+
+document.getElementById('pass-input').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') loginAdmin();
+});
+
+document.getElementById("search").oninput = render;
+load();
+setInterval(load, 30000);
+</script>
+</body>
+</html>
