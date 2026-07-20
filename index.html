@@ -35,9 +35,14 @@
     backdrop-filter: blur(16px); border-bottom: 1px solid var(--line);
     padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 64px;
   }
-  .topbar-left { display: flex; align-items: center; gap: 16px; }
+  .topbar-left { display: flex; align-items: center; gap: 24px; }
   .logo { font-family: var(--sans); font-size: 20px; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
   #updated-tag { font-size: 11px; font-family: var(--sans); color: var(--muted); font-weight: 500; background: var(--line2); padding: 4px 10px; border-radius: 20px; }
+
+  /* Navigacioni tabovi na vrhu */
+  .nav-tabs { display: flex; gap: 8px; background: var(--line2); padding: 4px; border-radius: 12px; }
+  .nav-tab { padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; transition: 0.2s; border: none; background: transparent; }
+  .nav-tab.active { background: var(--surface); color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
   .topbar-right { display: flex; align-items: center; }
   .top-login-form { display: flex; gap: 8px; align-items: center; }
@@ -48,6 +53,11 @@
   .logout-btn { background: var(--line); color: var(--ink); }
   .logout-btn:hover { background: #ef4444; color: white; }
 
+  /* Tab View Logic */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Layout za ID stranicu */
   .layout { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 64px); }
   
   .sidebar { 
@@ -77,7 +87,7 @@
   .faction-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 12px; }
   
   .sheriff-form { display: flex; gap: 8px; margin-bottom: 12px; }
-  .sheriff-input { flex: 1; min-width: 0; padding: 8px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; font-family: var(--sans); font-size: 12px; outline: none; transition: 0.2s; }
+  .sheriff-input { flex: 1; min-width: 0; padding: 8px 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; font-family: var(--sans); font-size: 12px; outline: none; transition: 0.2s; color: var(--ink); }
   .sheriff-input:focus { border-color: var(--accent); }
   .sheriff-btn { width: 32px; height: 32px; flex-shrink: 0; background: var(--accent-bg); color: var(--accent); border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
   .sheriff-btn:hover { background: var(--accent); color: white; }
@@ -122,10 +132,77 @@
   }
   .faction-menu button:hover { background: var(--accent-bg); color: var(--accent); padding-left: 16px; }
 
+  /* Stilovi za prilagođeni In-Game Vreme i Kalkulator u novom dizajnu */
+  .custom-page-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+  .custom-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    margin-bottom: 24px;
+  }
+  .custom-card h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+  .custom-input {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--ink);
+    outline: none;
+    transition: 0.2s;
+  }
+  .custom-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
+  .custom-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .custom-btn:hover { background: var(--accent-hover); }
+  .calc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  .result-display {
+    text-align: center;
+    padding: 20px;
+    background: var(--bg);
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    margin-top: 16px;
+  }
+  .result-val {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--accent);
+    font-family: var(--mono);
+  }
+
   @media (max-width: 768px) {
     .layout { grid-template-columns: 1fr; }
     .sidebar { position: static; height: auto; border-right: none; padding: 20px; }
-    .topbar { padding: 0 20px; flex-direction: column; height: auto; padding-top: 12px; padding-bottom: 12px; gap: 12px; }
+    .topbar { padding: 12px 20px; flex-direction: column; height: auto; gap: 12px; }
+    .topbar-left { flex-direction: column; gap: 10px; }
   }
 </style>
 </head>
@@ -134,6 +211,11 @@
 <div class="topbar">
   <div class="topbar-left">
     <div class="logo">UA UA</div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="switchTab('tab-id', this)">Igrači</button>
+      <button class="nav-tab" onclick="switchTab('tab-time', this)">In-Game Vreme</button>
+      <button class="nav-tab" onclick="switchTab('tab-calc', this)">Kalkulator Rude</button>
+    </div>
     <div id="updated-tag">Osvežavanje...</div>
   </div>
   
@@ -148,54 +230,116 @@
   </div>
 </div>
 
-<div class="layout">
-  <aside class="sidebar">
-    <div>
-      <div class="sidebar-label">Pretraga igrača</div>
-      <input type="text" id="search" class="search" placeholder="Ime ili ID..." />
+<!-- SEKCIJA 1: ID LISTA (Glavna) -->
+<div id="tab-id" class="tab-content active">
+  <div class="layout">
+    <aside class="sidebar">
+      <div>
+        <div class="sidebar-label">Pretraga igrača</div>
+        <input type="text" id="search" class="search" placeholder="Ime ili ID..." />
+      </div>
+
+      <div>
+        <div class="sidebar-label">Prikaz listi</div>
+        <div class="filter-group">
+          <button class="fbtn active" onclick="setFilter('online')" id="btn-online">
+            Na mreži <span class="fbtn-count" id="count-online">0</span>
+          </button>
+          <button class="fbtn" onclick="setFilter('history')" id="btn-history">
+            Svi viđeni <span class="fbtn-count" id="count-history">0</span>
+          </button>
+          <button class="fbtn" onclick="setFilter('sheriffs')" id="btn-sheriffs">
+            Šerifi <span class="fbtn-count" id="count-sheriffs-btn">0</span>
+          </button>
+          <button class="fbtn" onclick="setFilter('pirates')" id="btn-pirates">
+            Pirati <span class="fbtn-count" id="count-pirates-btn">0</span>
+          </button>
+          <button class="fbtn" onclick="setFilter('blacks')" id="btn-blacks">
+            Crnci <span class="fbtn-count" id="count-blacks-btn">0</span>
+          </button>
+          <button class="fbtn" onclick="setFilter('mexicans')" id="btn-mexicans">
+            Meksikanci <span class="fbtn-count" id="count-mexicans-btn">0</span>
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <div class="sidebar-label" id="panel-label">Frakcije (Pregled)</div>
+        <div id="faction-lists-container"></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="table-wrap">
+        <div class="table-head">
+          <div class="th">ID</div>
+          <div class="th">Ime igrača</div>
+          <div class="th">Status</div>
+          <div class="th right">Vreme</div>
+        </div>
+        <div id="table-body"></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- SEKCIJA 2: IN-GAME VREME -->
+<div id="tab-time" class="tab-content">
+  <div class="custom-page-container">
+    <div class="custom-card">
+      <h2>In-Game Vreme Kalkulator</h2>
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <button class="custom-btn" style="background: var(--line2); color: var(--ink);" onclick="postaviTrenutnoVreme()">Postavi trenutno IRL vreme</button>
+        <div>
+          <label style="font-size: 12px; font-weight: 600; color: var(--muted); display: block; margin-bottom: 6px;">UNESI STVARNO (IRL) VREME:</label>
+          <input type="time" id="irlTime" class="custom-input" style="text-align: center; font-size: 18px;" onchange="izracunajInGameVreme()">
+        </div>
+        <button class="custom-btn" onclick="izracunajInGameVreme()">Izračunaj Vreme u Igri</button>
+      </div>
+
+      <div class="result-display">
+        <div style="font-size: 12px; text-transform: uppercase; color: var(--muted); font-weight: 600;">Vreme u igrici (In-Game)</div>
+        <div class="result-val" id="ingameResult">--:--</div>
+        <div style="font-size: 12px; color: var(--ink2); margin-top: 4px;" id="detailsResult">Unesite vreme iznad.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SEKCIJA 3: KALKULATOR RUDE -->
+<div id="tab-calc" class="tab-content">
+  <div class="custom-page-container">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <h1 style="font-size: 24px; font-weight: 700; color: var(--ink);">UA PIRATI 🏴‍☠️</h1>
+      <p style="font-size: 13px; color: var(--muted); margin-top: 4px;">1 poluga = 5 rude + 2 uglja</p>
     </div>
 
-    <div>
-      <div class="sidebar-label">Prikaz listi</div>
-      <div class="filter-group">
-        <button class="fbtn active" onclick="setFilter('online')" id="btn-online">
-          Na mreži <span class="fbtn-count" id="count-online">0</span>
-        </button>
-        <button class="fbtn" onclick="setFilter('history')" id="btn-history">
-          Svi viđeni <span class="fbtn-count" id="count-history">0</span>
-        </button>
-        <button class="fbtn" onclick="setFilter('sheriffs')" id="btn-sheriffs">
-          Šerifi <span class="fbtn-count" id="count-sheriffs-btn">0</span>
-        </button>
-        <button class="fbtn" onclick="setFilter('pirates')" id="btn-pirates">
-          Pirati <span class="fbtn-count" id="count-pirates-btn">0</span>
-        </button>
-        <button class="fbtn" onclick="setFilter('blacks')" id="btn-blacks">
-          Crnci <span class="fbtn-count" id="count-blacks-btn">0</span>
-        </button>
-        <button class="fbtn" onclick="setFilter('mexicans')" id="btn-mexicans">
-          Meksikanci <span class="fbtn-count" id="count-mexicans-btn">0</span>
-        </button>
+    <div class="calc-grid">
+      <div class="custom-card" style="margin-bottom:0;">
+        <h2>🟠 Bakar</h2>
+        <input type="number" id="bakar" min="0" placeholder="Koliko rude imaš?" class="custom-input" oninput="izracunajRudu()">
+        <div class="result-display" id="rbakar" style="font-size: 14px; line-height: 1.6;">Poluga: 0<br>Ugalj: 0</div>
+      </div>
+
+      <div class="custom-card" style="margin-bottom:0;">
+        <h2>⚙️ Metal</h2>
+        <input type="number" id="metal" min="0" placeholder="Koliko rude imaš?" class="custom-input" oninput="izracunajRudu()">
+        <div class="result-display" id="rmetal" style="font-size: 14px; line-height: 1.6;">Poluga: 0<br>Ugalj: 0</div>
+      </div>
+
+      <div class="custom-card" style="margin-bottom:0;">
+        <h2>🥈 Srebro</h2>
+        <input type="number" id="srebro" min="0" placeholder="Koliko rude imaš?" class="custom-input" oninput="izracunajRudu()">
+        <div class="result-display" id="rsrebro" style="font-size: 14px; line-height: 1.6;">Poluga: 0<br>Ugalj: 0</div>
       </div>
     </div>
 
-    <div>
-      <div class="sidebar-label" id="panel-label">Frakcije (Pregled)</div>
-      <div id="faction-lists-container"></div>
-    </div>
-  </aside>
-
-  <main class="main">
-    <div class="table-wrap">
-      <div class="table-head">
-        <div class="th">ID</div>
-        <div class="th">Ime igrača</div>
-        <div class="th">Status</div>
-        <div class="th right">Vreme</div>
+    <div class="custom-card" style="margin-top: 24px; text-align: center;">
+      <div id="ukupno" style="font-size: 18px; font-weight: 700; color: var(--accent);">
+        UKUPNO POLUGA: 0<br>UKUPNO POTREBNO UGLJA: 0
       </div>
-      <div id="table-body"></div>
     </div>
-  </main>
+  </div>
 </div>
 
 <script>
@@ -205,6 +349,14 @@ let allData = [];
 let currentFilter = 'online'; 
 let factionData = { sheriffs: [], pirates: [], blacks: [], mexicans: [] };
 let savedPassword = "";
+
+// Prebacivanje tabova
+function switchTab(tabId, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  btn.classList.add('active');
+}
 
 document.addEventListener('click', () => {
   document.querySelectorAll('.faction-menu').forEach(m => m.style.display = 'none');
@@ -330,7 +482,9 @@ function toggleMenu(e, name) {
 
 function loginAdmin() {
   const passInput = document.getElementById('pass-input');
-  if (passInput.value.trim() !== "") {
+  
+  // OVDJE UNESI SVOJU PRAVU LOZINKU
+  if (passInput.value === "777") {
     savedPassword = passInput.value;
     passInput.value = '';
     document.getElementById('lock-zone').style.display = 'none';
@@ -338,6 +492,9 @@ function loginAdmin() {
     document.getElementById('panel-label').textContent = "Upravljanje listama";
     render();
     renderFactionPanels();
+  } else {
+    alert("Pogrešna lozinka!");
+    passInput.value = '';
   }
 }
 
@@ -444,12 +601,95 @@ function renderFactionPanels() {
   }
 }
 
+/* Skripte za In-Game Vreme */
+function postaviTrenutnoVreme() {
+  const sada = new Date();
+  const sati = String(sada.getHours()).padStart(2, '0');
+  const minuti = String(sada.getMinutes()).padStart(2, '0');
+  document.getElementById('irlTime').value = `${sati}:${minuti}`;
+  izracunajInGameVreme();
+}
+
+function izracunajInGameVreme() {
+  const timeVal = document.getElementById('irlTime').value;
+  if (!timeVal) return;
+
+  const [irlSati, irlMinuti] = timeVal.split(':').map(Number);
+  const irlUkupnoMinuta = irlSati * 60 + irlMinuti;
+
+  const r2 = 2 * 60;   
+  const r10 = 10 * 60; 
+  const r18 = 18 * 60; 
+
+  let zadnjiRestartMinuta = 0;
+  let restartTekst = "";
+
+  if (irlUkupnoMinuta >= r18) {
+      zadnjiRestartMinuta = r18;
+      restartTekst = "18:00";
+  } else if (irlUkupnoMinuta >= r10) {
+      zadnjiRestartMinuta = r10;
+      restartTekst = "10:00";
+  } else if (irlUkupnoMinuta >= r2) {
+      zadnjiRestartMinuta = r2;
+      restartTekst = "02:00";
+  } else {
+      zadnjiRestartMinuta = r18 - (24 * 60); 
+      restartTekst = "18:00 (prethodnog dana)";
+  }
+
+  const prosloStvarnihMinuta = irlUkupnoMinuta - zadnjiRestartMinuta;
+  const pocetneInGameMinute = 6 * 60; 
+  
+  let inGameUkupnoMinuta = pocetneInGameMinute + (prosloStvarnihMinuta * 10) - 10;
+
+  if (inGameUkupnoMinuta < 0) {
+      inGameUkupnoMinuta += 24 * 60;
+  }
+
+  const inGameSati = Math.floor((inGameUkupnoMinuta / 60) % 24);
+  const inGameMinuti = Math.floor(inGameUkupnoMinuta % 60);
+
+  const formatiraniSati = String(inGameSati).padStart(2, '0');
+  const formatiraniMinuti = String(inGameMinuti).padStart(2, '0');
+
+  document.getElementById('ingameResult').innerText = `${formatiraniSati}:${formatiraniMinuti}`;
+  document.getElementById('detailsResult').innerText = `Zadnji restart: ${restartTekst} | Prošlo: ${prosloStvarnihMinuta} min IRL`;
+}
+
+/* Skripte za Kalkulator Rude */
+function obradiRudu(v){
+    let poluge=Math.floor(v/5);
+    let ugalj=poluge*2;
+    return {poluge,ugalj};
+}
+
+function izracunajRudu(){
+    let bakar=Number(document.getElementById('bakar').value)||0;
+    let metal=Number(document.getElementById('metal').value)||0;
+    let srebro=Number(document.getElementById('srebro').value)||0;
+
+    let b=obradiRudu(bakar);
+    let m=obradiRudu(metal);
+    let s=obradiRudu(srebro);
+
+    document.getElementById('rbakar').innerHTML = `Poluga: ${b.poluge}<br>Ugalj: ${b.ugalj}`;
+    document.getElementById('rmetal').innerHTML = `Poluga: ${m.poluge}<br>Ugalj: ${m.ugalj}`;
+    document.getElementById('rsrebro').innerHTML = `Poluga: ${s.poluge}<br>Ugalj: ${s.ugalj}`;
+
+    let ukupnoUglja=b.ugalj+m.ugalj+s.ugalj;
+    let ukupnoPoluga=b.poluge+m.poluge+s.poluge;
+
+    document.getElementById('ukupno').innerHTML = `UKUPNO POLUGA: ${ukupnoPoluga}<br>UKUPNO POTREBNO UGLJA: ${ukupnoUglja}`;
+}
+
 document.getElementById('pass-input').addEventListener('keypress', function(e) {
   if (e.key === 'Enter') loginAdmin();
 });
 
 document.getElementById("search").oninput = render;
 
+postaviTrenutnoVreme();
 load();
 setInterval(load, 20000);
 </script>
