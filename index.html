@@ -33,9 +33,9 @@
   .topbar {
     position: sticky; top: 0; z-index: 100; background: var(--topbar-bg);
     backdrop-filter: blur(16px); border-bottom: 1px solid var(--line);
-    padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 64px;
+    padding: 0 32px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 64px;
   }
-  .topbar-left { display: flex; align-items: center; gap: 24px; }
+  .topbar-left { display: flex; align-items: center; gap: 24px; justify-content: flex-start; }
   .logo { font-family: var(--sans); font-size: 20px; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
   #updated-tag { font-size: 11px; font-family: var(--sans); color: var(--muted); font-weight: 500; background: var(--line2); padding: 4px 10px; border-radius: 20px; }
 
@@ -44,7 +44,18 @@
   .nav-tab { padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; transition: 0.2s; border: none; background: transparent; }
   .nav-tab.active { background: var(--surface); color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-  .topbar-right { display: flex; align-items: center; }
+  /* Centrirano vreme */
+  .topbar-center {
+    display: flex; align-items: center; gap: 8px; background: var(--surface); 
+    border: 1px solid var(--line); padding: 6px 16px; border-radius: 20px; 
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  }
+  .ig-time-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .ig-time-val { font-size: 15px; font-weight: 700; color: var(--accent); font-family: var(--mono); }
+  .refresh-time-btn { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; color: var(--muted); padding: 2px; }
+  .refresh-time-btn:hover { transform: rotate(180deg); color: var(--accent); }
+
+  .topbar-right { display: flex; align-items: center; justify-content: flex-end; }
   .top-login-form { display: flex; gap: 8px; align-items: center; }
   .top-input { padding: 8px 14px; border-radius: 20px; border: 1px solid var(--line); background: var(--surface); font-family: var(--sans); font-size: 12px; color: var(--ink); outline: none; transition: 0.2s; width: 140px; }
   .top-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
@@ -132,77 +143,20 @@
   }
   .faction-menu button:hover { background: var(--accent-bg); color: var(--accent); padding-left: 16px; }
 
-  /* Stilovi za prilagođeni In-Game Vreme i Kalkulator u novom dizajnu */
-  .custom-page-container {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 0 20px;
-  }
-  .custom-card {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-    margin-bottom: 24px;
-  }
-  .custom-card h2 {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--ink);
-    margin-bottom: 16px;
-  }
-  .custom-input {
-    width: 100%;
-    padding: 12px 16px;
-    background: var(--bg);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    font-family: var(--sans);
-    font-size: 14px;
-    color: var(--ink);
-    outline: none;
-    transition: 0.2s;
-  }
+  /* Stilovi za Kalkulator u novom dizajnu */
+  .custom-page-container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+  .custom-card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); margin-bottom: 24px; }
+  .custom-card h2 { font-size: 18px; font-weight: 600; color: var(--ink); margin-bottom: 16px; }
+  .custom-input { width: 100%; padding: 12px 16px; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; font-family: var(--sans); font-size: 14px; color: var(--ink); outline: none; transition: 0.2s; }
   .custom-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
-  .custom-btn {
-    width: 100%;
-    padding: 12px;
-    border-radius: 12px;
-    background: var(--accent);
-    color: white;
-    border: none;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-  .custom-btn:hover { background: var(--accent-hover); }
-  .calc-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-  }
-  .result-display {
-    text-align: center;
-    padding: 20px;
-    background: var(--bg);
-    border-radius: 12px;
-    border: 1px solid var(--line);
-    margin-top: 16px;
-  }
-  .result-val {
-    font-size: 32px;
-    font-weight: 700;
-    color: var(--accent);
-    font-family: var(--mono);
-  }
+  .calc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+  .result-display { text-align: center; padding: 20px; background: var(--bg); border-radius: 12px; border: 1px solid var(--line); margin-top: 16px; }
 
   @media (max-width: 768px) {
+    .topbar { display: flex; flex-direction: column; height: auto; gap: 16px; padding: 16px 20px; }
+    .topbar-left, .topbar-center, .topbar-right { justify-content: center; width: 100%; }
     .layout { grid-template-columns: 1fr; }
     .sidebar { position: static; height: auto; border-right: none; padding: 20px; }
-    .topbar { padding: 12px 20px; flex-direction: column; height: auto; gap: 12px; }
-    .topbar-left { flex-direction: column; gap: 10px; }
   }
 </style>
 </head>
@@ -213,12 +167,22 @@
     <div class="logo">UA UA</div>
     <div class="nav-tabs">
       <button class="nav-tab active" onclick="switchTab('tab-id', this)">Igrači</button>
-      <button class="nav-tab" onclick="switchTab('tab-time', this)">In-Game Vreme</button>
       <button class="nav-tab" onclick="switchTab('tab-calc', this)">Kalkulator Rude</button>
     </div>
     <div id="updated-tag">Osvežavanje...</div>
   </div>
   
+  <!-- NOVO: Vreme je sada stalno na sredini hedera -->
+  <div class="topbar-center">
+    <span class="ig-time-label">IG Vreme:</span>
+    <span id="quick-ig-time" class="ig-time-val">--:--</span>
+    <button class="refresh-time-btn" onclick="brzoOsveziVreme()" title="Osveži In-Game Vreme">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M3 22v-6h6"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path>
+      </svg>
+    </button>
+  </div>
+
   <div class="topbar-right">
     <div id="lock-zone" class="top-login-form">
       <input type="password" id="pass-input" class="top-input" placeholder="Admin lozinka..." />
@@ -283,30 +247,7 @@
   </div>
 </div>
 
-<!-- SEKCIJA 2: IN-GAME VREME -->
-<div id="tab-time" class="tab-content">
-  <div class="custom-page-container">
-    <div class="custom-card">
-      <h2>In-Game Vreme Kalkulator</h2>
-      <div style="display: flex; flex-direction: column; gap: 16px;">
-        <button class="custom-btn" style="background: var(--line2); color: var(--ink);" onclick="postaviTrenutnoVreme()">Postavi trenutno IRL vreme</button>
-        <div>
-          <label style="font-size: 12px; font-weight: 600; color: var(--muted); display: block; margin-bottom: 6px;">UNESI STVARNO (IRL) VREME:</label>
-          <input type="time" id="irlTime" class="custom-input" style="text-align: center; font-size: 18px;" onchange="izracunajInGameVreme()">
-        </div>
-        <button class="custom-btn" onclick="izracunajInGameVreme()">Izračunaj Vreme u Igri</button>
-      </div>
-
-      <div class="result-display">
-        <div style="font-size: 12px; text-transform: uppercase; color: var(--muted); font-weight: 600;">Vreme u igrici (In-Game)</div>
-        <div class="result-val" id="ingameResult">--:--</div>
-        <div style="font-size: 12px; color: var(--ink2); margin-top: 4px;" id="detailsResult">Unesite vreme iznad.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- SEKCIJA 3: KALKULATOR RUDE -->
+<!-- SEKCIJA 2: KALKULATOR RUDE -->
 <div id="tab-calc" class="tab-content">
   <div class="custom-page-container">
     <div style="text-align: center; margin-bottom: 24px;">
@@ -483,8 +424,7 @@ function toggleMenu(e, name) {
 function loginAdmin() {
   const passInput = document.getElementById('pass-input');
   
-  // OVDJE UNESI SVOJU PRAVU LOZINKU
-  if (passInput.value === "777") {
+  if (passInput.value === "tajnaSifra123") {
     savedPassword = passInput.value;
     passInput.value = '';
     document.getElementById('lock-zone').style.display = 'none';
@@ -601,20 +541,11 @@ function renderFactionPanels() {
   }
 }
 
-/* Skripte za In-Game Vreme */
-function postaviTrenutnoVreme() {
+/* NOVA FUNKCIJA: Brzo osvežavanje In-Game Vremena */
+function brzoOsveziVreme() {
   const sada = new Date();
-  const sati = String(sada.getHours()).padStart(2, '0');
-  const minuti = String(sada.getMinutes()).padStart(2, '0');
-  document.getElementById('irlTime').value = `${sati}:${minuti}`;
-  izracunajInGameVreme();
-}
-
-function izracunajInGameVreme() {
-  const timeVal = document.getElementById('irlTime').value;
-  if (!timeVal) return;
-
-  const [irlSati, irlMinuti] = timeVal.split(':').map(Number);
+  const irlSati = sada.getHours();
+  const irlMinuti = sada.getMinutes();
   const irlUkupnoMinuta = irlSati * 60 + irlMinuti;
 
   const r2 = 2 * 60;   
@@ -622,20 +553,15 @@ function izracunajInGameVreme() {
   const r18 = 18 * 60; 
 
   let zadnjiRestartMinuta = 0;
-  let restartTekst = "";
 
   if (irlUkupnoMinuta >= r18) {
       zadnjiRestartMinuta = r18;
-      restartTekst = "18:00";
   } else if (irlUkupnoMinuta >= r10) {
       zadnjiRestartMinuta = r10;
-      restartTekst = "10:00";
   } else if (irlUkupnoMinuta >= r2) {
       zadnjiRestartMinuta = r2;
-      restartTekst = "02:00";
   } else {
       zadnjiRestartMinuta = r18 - (24 * 60); 
-      restartTekst = "18:00 (prethodnog dana)";
   }
 
   const prosloStvarnihMinuta = irlUkupnoMinuta - zadnjiRestartMinuta;
@@ -653,8 +579,15 @@ function izracunajInGameVreme() {
   const formatiraniSati = String(inGameSati).padStart(2, '0');
   const formatiraniMinuti = String(inGameMinuti).padStart(2, '0');
 
-  document.getElementById('ingameResult').innerText = `${formatiraniSati}:${formatiraniMinuti}`;
-  document.getElementById('detailsResult').innerText = `Zadnji restart: ${restartTekst} | Prošlo: ${prosloStvarnihMinuta} min IRL`;
+  // Osveži tekst u meniju
+  const timeElement = document.getElementById('quick-ig-time');
+  timeElement.innerText = `${formatiraniSati}:${formatiraniMinuti}`;
+  
+  // Efekat za potvrdu klika
+  timeElement.style.color = "var(--green)";
+  setTimeout(() => {
+    timeElement.style.color = "var(--accent)";
+  }, 300);
 }
 
 /* Skripte za Kalkulator Rude */
@@ -689,7 +622,11 @@ document.getElementById('pass-input').addEventListener('keypress', function(e) {
 
 document.getElementById("search").oninput = render;
 
-postaviTrenutnoVreme();
+// Pokrećemo vreme odmah na početku
+brzoOsveziVreme();
+// I za svaki slučaj neka se auto-update-uje svakih 10 sekundi ako korisnik zaboravi da klikne
+setInterval(brzoOsveziVreme, 10000);
+
 load();
 setInterval(load, 20000);
 </script>
