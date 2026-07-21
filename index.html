@@ -40,12 +40,10 @@
   .logo { font-family: var(--sans); font-size: 20px; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
   #updated-tag { font-size: 11px; font-family: var(--sans); color: var(--muted); font-weight: 500; background: var(--line2); padding: 4px 10px; border-radius: 20px; }
 
-  /* Navigacioni tabovi na vrhu */
   .nav-tabs { display: flex; gap: 8px; background: var(--line2); padding: 4px; border-radius: 12px; }
   .nav-tab { padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; transition: 0.2s; border: none; background: transparent; }
   .nav-tab.active { background: var(--surface); color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-  /* Centrirano vreme */
   .topbar-center {
     display: flex; align-items: center; gap: 8px; background: var(--surface); 
     border: 1px solid var(--line); padding: 6px 16px; border-radius: 20px; 
@@ -67,11 +65,9 @@
   .logout-btn { background: var(--line); color: var(--ink); }
   .logout-btn:hover { background: #ef4444; color: white; }
 
-  /* Tab View Logic */
   .tab-content { display: none; }
   .tab-content.active { display: block; }
 
-  /* Layout za ID stranicu */
   .layout { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 64px); }
   
   .sidebar { 
@@ -146,7 +142,6 @@
   }
   .faction-menu button:hover { background: var(--accent-bg); color: var(--accent); padding-left: 16px; }
 
-  /* Stilovi za Kalkulator, Sadnje i Admin Sef */
   .custom-page-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
   .custom-card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); margin-bottom: 24px; }
   .custom-card h2 { font-size: 18px; font-weight: 600; color: var(--ink); margin-bottom: 16px; }
@@ -200,11 +195,55 @@
   
   .admin-action-box { display: flex; gap: 12px; align-items: center; background: var(--bg); padding: 16px; border-radius: 12px; border: 1px solid var(--line); margin-bottom: 24px; }
   
+  .image-modal {
+    display: none; 
+    position: fixed; 
+    z-index: 9999; 
+    left: 0; 
+    top: 0; 
+    width: 100%; 
+    height: 100%; 
+    background-color: rgba(0,0,0,0.85); 
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .image-modal-content {
+    margin: auto; 
+    display: block; 
+    max-width: 90%; 
+    max-height: 90vh; 
+    position: relative; 
+    top: 50%; 
+    transform: translateY(-50%);
+    border-radius: 12px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    object-fit: contain;
+  }
+  .close-modal {
+    position: absolute; 
+    top: 20px; 
+    right: 40px; 
+    color: #ffffff; 
+    font-size: 40px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    transition: 0.2s; 
+    z-index: 10000;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .close-modal span { font-size: 16px; text-transform: uppercase; letter-spacing: 1px; }
+  .close-modal:hover { color: var(--red); transform: scale(1.1); }
+
   @media (max-width: 768px) {
     .topbar { display: flex; flex-direction: column; height: auto; gap: 16px; padding: 16px 20px; }
     .topbar-left, .topbar-center, .topbar-right { justify-content: center; width: 100%; }
     .layout { grid-template-columns: 1fr; }
     .sidebar { position: static; height: auto; border-right: none; padding: 20px; }
+    .close-modal { right: 20px; top: 15px; }
+    .close-modal span { display: none; }
   }
 </style>
 </head>
@@ -244,7 +283,6 @@
   </div>
 </div>
 
-<!-- SEKCIJA 1: ID LISTA (Glavna) -->
 <div id="tab-id" class="tab-content active">
   <div class="layout">
     <aside class="sidebar">
@@ -297,7 +335,6 @@
   </div>
 </div>
 
-<!-- SEKCIJA 2: KALKULATOR RUDE -->
 <div id="tab-calc" class="tab-content">
   <div class="custom-page-container">
     <div style="text-align: center; margin-bottom: 24px;">
@@ -333,7 +370,6 @@
   </div>
 </div>
 
-<!-- SEKCIJA 3: SADNJE -->
 <div id="tab-sadnje" class="tab-content">
   <div class="custom-page-container">
     <h2 style="font-size: 20px; font-weight: 600; color: var(--ink); margin-bottom: 24px;">Aktivne Sadnje na Serveru</h2>
@@ -341,7 +377,6 @@
   </div>
 </div>
 
-<!-- SEKCIJA 4: ADMIN SEF (Logovi) -->
 <div id="tab-admin" class="tab-content">
   <div class="custom-page-container">
     <div class="custom-card">
@@ -369,17 +404,20 @@
   </div>
 </div>
 
+<div id="image-modal" class="image-modal" onclick="closeImageModal()">
+  <div class="close-modal" onclick="closeImageModal()"><span>IZAĐI</span> &times;</div>
+  <img class="image-modal-content" id="enlarged-img" onclick="event.stopPropagation();">
+</div>
+
 <script>
-// --- TVOJA KONFIGURACIJA ---
 const WORKER = "https://ancient-violet-3dbc.dizzzkliper.workers.dev/";
-const MY_GUILD = "1494842502510022747"; // OBAVEZNO ZAMENI SA TVOJIM DISCORD SERVER ID-EM
+const MY_GUILD = "1494842502510022747"; 
 
 let allData = [];
 let currentFilter = 'online'; 
 let factionData = { sheriffs: [], pirates: [], blacks: [], mexicans: [] };
 let savedPassword = "";
 
-// Prebacivanje tabova
 function switchTab(tabId, btn) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
@@ -393,7 +431,17 @@ document.addEventListener('click', () => {
   document.querySelectorAll('.faction-menu').forEach(m => m.style.display = 'none');
 });
 
-// GLAVNO UCITAVANJE SVIH PODATAKA
+function openImageModal(imgSrc) {
+  const modal = document.getElementById("image-modal");
+  const modalImg = document.getElementById("enlarged-img");
+  modal.style.display = "block";
+  modalImg.src = imgSrc;
+}
+
+function closeImageModal() {
+  document.getElementById("image-modal").style.display = "none";
+}
+
 async function load() {
   try {
     const [l, h, f, sadnjeRes, sefRes] = await Promise.all([
@@ -404,7 +452,6 @@ async function load() {
       fetch(WORKER + "sef").catch(() => ({json: () => ({})}))
     ]);
     
-    // 1. Igraci & Frakcije
     const live = await l.json();
     const hist = await h.json();
     factionData = await f.json();
@@ -426,7 +473,6 @@ async function load() {
     const now = new Date();
     document.getElementById("updated-tag").textContent = `Osveženo: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
     
-    // 2. Sadnje
     const sadnje = await sadnjeRes.json();
     const filtriraneSadnje = (Array.isArray(sadnje) ? sadnje : []).filter(s => s.guild_id == MY_GUILD);
     const sadnjeCont = document.getElementById("sadnje-container");
@@ -453,14 +499,14 @@ async function load() {
 
           const avatarSrc = s.avatar_url || "https://cdn.discordapp.com/embed/avatars/0.png";
           const mediaHtml = s.image_url
-              ? `<img src="${s.image_url}" class="sadnja-img" alt="Sadnja ${s.kultura}" onerror="this.remove();">`
+              ? `<img src="${s.image_url}" class="sadnja-img" alt="Sadnja ${s.kultura}" onerror="this.remove();" onclick="openImageModal(this.src)" style="cursor: zoom-in;">`
               : `<div class="sadnja-media-empty">🌱</div>`;
 
           return `
           <div class="sadnja-card">
               <div class="sadnja-media">
                   ${mediaHtml}
-                  <div class="sadnja-media-overlay"></div>
+                  <div class="sadnja-media-overlay" style="pointer-events: none;"></div>
                   <div class="sadnja-kultura-badge">🌿 ${s.kultura.toUpperCase()}</div>
                   <div class="sadnja-header">
                       <img src="${avatarSrc}" class="sadnja-avatar" alt="${s.username}">
@@ -481,7 +527,6 @@ async function load() {
       }).join("");
     }
 
-    // 3. Sef Public
     const sef = await sefRes.json();
     if(sef[MY_GUILD]) {
         document.getElementById("sef-display").innerText = "Sef: $" + sef[MY_GUILD].stanje.toLocaleString();
@@ -573,7 +618,7 @@ function toggleMenu(e, name) {
   menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
 }
 
-let isSuperAdmin = false; // true samo ako je unesena posebna (sef) lozinka
+let isSuperAdmin = false; 
 
 async function loginAdmin() {
   const passInput = document.getElementById('pass-input');
@@ -582,38 +627,34 @@ async function loginAdmin() {
 
   if (!uneto) return;
 
-  // Nivo 1: obična lozinka -> samo upravljanje frakcijama/listama
-  if (uneto === "777") {
-    savedPassword = uneto;
-    isSuperAdmin = false;
-    otkljucajOsnovno();
-    document.getElementById('nav-admin').style.display = 'none'; // ova lozinka NE otvara sef logove
-    return;
-  }
-
-  // Nivo 2: pokušaj kao posebna admin lozinka -> otvara Sef Logove + izmenu stanja
-  // Validacija ide preko servera (worker proverava ADMIN_PASSWORD), pa "777" ovde nikad ne prolazi.
   try {
-    const res = await fetch(WORKER + "admin_logs", {
+    const res = await fetch(WORKER + "verify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password: uneto, guild_id: MY_GUILD })
+      body: JSON.stringify({ password: uneto })
     });
 
-    if (res.ok) {
-      savedPassword = uneto;
-      isSuperAdmin = true;
-      otkljucajOsnovno();
+    if (!res.ok) {
+      alert("Pogrešna lozinka!");
+      return;
+    }
+
+    const data = await res.json();
+    savedPassword = uneto;
+    isSuperAdmin = (data.tier === "admin");
+    otkljucajOsnovno();
+
+    if (isSuperAdmin) {
       document.getElementById('nav-admin').style.display = 'block';
       switchTab('tab-admin', document.getElementById('nav-admin'));
       osveziLogove();
-      return;
+    } else {
+      document.getElementById('nav-admin').style.display = 'none';
     }
   } catch (e) {
     console.error(e);
+    alert("Greška pri proveri lozinke. Pokušaj ponovo.");
   }
-
-  alert("Pogrešna lozinka!");
 }
 
 function otkljucajOsnovno() {
@@ -631,7 +672,6 @@ function logoutAdmin() {
   document.getElementById('logout-zone').style.display = 'none';
   document.getElementById('panel-label').textContent = "Frakcije (Pregled)";
   
-  // Sakrij Admin Tab i prebaci nazad na Igrace
   const adminTab = document.getElementById('nav-admin');
   adminTab.style.display = 'none';
   if (adminTab.classList.contains('active')) {
@@ -642,7 +682,6 @@ function logoutAdmin() {
   renderFactionPanels();
 }
 
-// LOGOVI SEFA I FORSIRANJE IZMENE (Zaštićeno šifrom)
 async function osveziLogove() {
     if(!savedPassword || !isSuperAdmin) return;
     try {
@@ -699,8 +738,6 @@ async function azurirajSef() {
     } catch(e) { alert("Greška pri spajanju."); }
 }
 
-
-// Upravljanje Frakcijama (API Pozivi)
 async function addMember(faction, customName) {
   let name = customName;
   if (!name) {
@@ -743,6 +780,7 @@ async function removeMember(faction, name) {
   } catch(e) { console.error(e); }
 }
 
+/* OVO JE FUNKCIJA KOJA JE SLUČAJNO BILA OBRISANA */
 function renderFactionPanels() {
   const container = document.getElementById('faction-lists-container');
   const hasPass = savedPassword !== "";
@@ -795,7 +833,6 @@ function renderFactionPanels() {
   }
 }
 
-/* Brzo osvežavanje In-Game Vremena */
 function brzoOsveziVreme() {
   const sada = new Date();
   const irlSati = sada.getHours();
@@ -818,10 +855,17 @@ function brzoOsveziVreme() {
       zadnjiRestartMinuta = r18 - (24 * 60); 
   }
 
-  const prosloStvarnihMinuta = irlUkupnoMinuta - zadnjiRestartMinuta;
+  // Kasnjenje restarta (2.5 minuta IRL)
+  const kasnjenjeIRL = 2.5;
+  let prosloStvarnihMinuta = irlUkupnoMinuta - zadnjiRestartMinuta;
+  
+  if (prosloStvarnihMinuta > 0) {
+      prosloStvarnihMinuta = Math.max(0, prosloStvarnihMinuta - kasnjenjeIRL);
+  }
+
   const pocetneInGameMinute = 6 * 60; 
   
-  let inGameUkupnoMinuta = pocetneInGameMinute + (prosloStvarnihMinuta * 10) - 10;
+  let inGameUkupnoMinuta = pocetneInGameMinute + (prosloStvarnihMinuta * 10);
   if (inGameUkupnoMinuta < 0) inGameUkupnoMinuta += 24 * 60;
 
   const inGameSati = Math.floor((inGameUkupnoMinuta / 60) % 24);
@@ -837,7 +881,6 @@ function brzoOsveziVreme() {
   setTimeout(() => { timeElement.style.color = "var(--accent)"; }, 300);
 }
 
-/* Skripte za Kalkulator Rude */
 function obradiRudu(v){
     let poluge=Math.floor(v/5);
     let ugalj=poluge*2;
@@ -869,7 +912,6 @@ document.getElementById('pass-input').addEventListener('keypress', function(e) {
 
 document.getElementById("search").oninput = render;
 
-// Inicijalizacija
 brzoOsveziVreme();
 setInterval(brzoOsveziVreme, 10000);
 load();
