@@ -12,6 +12,7 @@
     --green: #10b981; --green-bg: #d1fae5; 
     --accent: #a78bfa; --accent-bg: #ede9fe;
     --accent-hover: #8b5cf6;
+    --red: #ef4444; --yellow: #f59e0b;
     --mono: 'Geist Mono', monospace; --sans: 'Geist', sans-serif;
   }
   
@@ -55,7 +56,9 @@
   .refresh-time-btn { background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; color: var(--muted); padding: 2px; }
   .refresh-time-btn:hover { transform: rotate(180deg); color: var(--accent); }
 
-  .topbar-right { display: flex; align-items: center; justify-content: flex-end; }
+  .topbar-right { display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
+  #sef-display { font-size: 15px; font-weight: 700; color: var(--green); font-family: var(--mono); background: var(--green-bg); padding: 6px 12px; border-radius: 12px; }
+  
   .top-login-form { display: flex; gap: 8px; align-items: center; }
   .top-input { padding: 8px 14px; border-radius: 20px; border: 1px solid var(--line); background: var(--surface); font-family: var(--sans); font-size: 12px; color: var(--ink); outline: none; transition: 0.2s; width: 140px; }
   .top-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
@@ -143,8 +146,8 @@
   }
   .faction-menu button:hover { background: var(--accent-bg); color: var(--accent); padding-left: 16px; }
 
-  /* Stilovi za Kalkulator u novom dizajnu */
-  .custom-page-container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+  /* Stilovi za Kalkulator, Sadnje i Admin Sef */
+  .custom-page-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
   .custom-card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); margin-bottom: 24px; }
   .custom-card h2 { font-size: 18px; font-weight: 600; color: var(--ink); margin-bottom: 16px; }
   .custom-input { width: 100%; padding: 12px 16px; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; font-family: var(--sans); font-size: 14px; color: var(--ink); outline: none; transition: 0.2s; }
@@ -152,6 +155,51 @@
   .calc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
   .result-display { text-align: center; padding: 20px; background: var(--bg); border-radius: 12px; border: 1px solid var(--line); margin-top: 16px; }
 
+  .sadnje-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 22px; }
+  .sadnja-card {
+    background: var(--surface);
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 20px rgba(0,0,0,0.03);
+    overflow: hidden;
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .sadnja-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.07), 0 18px 34px rgba(0,0,0,0.09);
+    border-color: var(--accent);
+  }
+  .sadnja-media { position: relative; width: 100%; aspect-ratio: 16 / 11; overflow: hidden; background: linear-gradient(135deg, var(--accent-bg), var(--line2)); }
+  .sadnja-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s ease; }
+  .sadnja-card:hover .sadnja-img { transform: scale(1.06); }
+  .sadnja-media-empty { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 42px; opacity: .3; }
+  .sadnja-media-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.78) 0%, rgba(0,0,0,.18) 55%, transparent 100%); pointer-events: none; }
+  .sadnja-kultura-badge {
+    position: absolute; top: 12px; right: 12px;
+    background: rgba(17,24,39,.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    color: #fff; font-size: 11px; font-weight: 700; letter-spacing: .04em;
+    padding: 5px 11px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.25);
+  }
+  .sadnja-header { position: absolute; left: 14px; right: 14px; bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .sadnja-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,.9); flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,.35); }
+  .sadnja-username { font-weight: 700; font-size: 14px; color: #fff; line-height: 1.3; text-shadow: 0 1px 4px rgba(0,0,0,.45); }
+  .sadnja-body { padding: 16px 18px 18px; }
+  .sadnja-status-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--muted); margin-bottom: 9px; }
+  .sadnja-status-time { color: var(--accent); font-weight: 700; }
+  .progress-bg { background: var(--bg); height: 9px; border-radius: 999px; overflow: hidden; border: 1px solid var(--line); }
+  .progress-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), #c4b5fd); transition: width 1s linear; }
+  .progress-percent { text-align: right; font-size: 11px; color: var(--muted); margin-top: 7px; font-weight: 700; letter-spacing: .02em; }
+
+  table.log-table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
+  table.log-table th, table.log-table td { padding: 14px 20px; text-align: left; border-bottom: 1px solid var(--line2); font-size: 13px; }
+  table.log-table th { background: var(--bg); font-weight: 600; color: var(--muted); text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; }
+  table.log-table td.in { color: var(--green); font-weight: 600; }
+  table.log-table td.out { color: var(--red); font-weight: 600; }
+  table.log-table td.edit { color: var(--yellow); font-weight: 600; }
+  
+  .admin-action-box { display: flex; gap: 12px; align-items: center; background: var(--bg); padding: 16px; border-radius: 12px; border: 1px solid var(--line); margin-bottom: 24px; }
+  
   @media (max-width: 768px) {
     .topbar { display: flex; flex-direction: column; height: auto; gap: 16px; padding: 16px 20px; }
     .topbar-left, .topbar-center, .topbar-right { justify-content: center; width: 100%; }
@@ -168,11 +216,12 @@
     <div class="nav-tabs">
       <button class="nav-tab active" onclick="switchTab('tab-id', this)">Igrači</button>
       <button class="nav-tab" onclick="switchTab('tab-calc', this)">Kalkulator Rude</button>
+      <button class="nav-tab" onclick="switchTab('tab-sadnje', this)">Sadnje</button>
+      <button class="nav-tab" id="nav-admin" style="display: none;" onclick="switchTab('tab-admin', this)">Sef Logovi 🔒</button>
     </div>
     <div id="updated-tag">Osvežavanje...</div>
   </div>
   
-  <!-- NOVO: Vreme je sada stalno na sredini hedera -->
   <div class="topbar-center">
     <span class="ig-time-label">IG Vreme:</span>
     <span id="quick-ig-time" class="ig-time-val">--:--</span>
@@ -184,6 +233,7 @@
   </div>
 
   <div class="topbar-right">
+    <div id="sef-display">Sef: $0</div>
     <div id="lock-zone" class="top-login-form">
       <input type="password" id="pass-input" class="top-input" placeholder="Admin lozinka..." />
       <button onclick="loginAdmin()" class="top-btn">Prijavi se</button>
@@ -283,8 +333,46 @@
   </div>
 </div>
 
+<!-- SEKCIJA 3: SADNJE -->
+<div id="tab-sadnje" class="tab-content">
+  <div class="custom-page-container">
+    <h2 style="font-size: 20px; font-weight: 600; color: var(--ink); margin-bottom: 24px;">Aktivne Sadnje na Serveru</h2>
+    <div id="sadnje-container" class="sadnje-grid">Učitavanje...</div>
+  </div>
+</div>
+
+<!-- SEKCIJA 4: ADMIN SEF (Logovi) -->
+<div id="tab-admin" class="tab-content">
+  <div class="custom-page-container">
+    <div class="custom-card">
+      <h2>Upravljanje Sefom</h2>
+      <div class="admin-action-box">
+        <h3 style="margin: 0; flex-grow: 1; font-size: 16px; color: var(--ink);">Trenutno stanje: <span id="admin-stanje" style="color:var(--green)">$0</span></h3>
+        <input type="number" id="novo-stanje" class="custom-input" style="width: auto; min-width: 200px;" placeholder="Novi iznos (npr. 50000)">
+        <button onclick="azurirajSef()" class="top-btn" style="background: var(--yellow); color: #000;">Forsiraj Izmenu</button>
+      </div>
+
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th>Datum i Vreme</th>
+            <th>Akcija</th>
+            <th>Izvršilac</th>
+            <th>Iznos</th>
+          </tr>
+        </thead>
+        <tbody id="logovi-body">
+          <tr><td colspan="4" style="text-align: center; color: var(--muted);">Učitavanje logova...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 <script>
+// --- TVOJA KONFIGURACIJA ---
 const WORKER = "https://ancient-violet-3dbc.dizzzkliper.workers.dev/";
+const MY_GUILD = "1494842502510022747"; // OBAVEZNO ZAMENI SA TVOJIM DISCORD SERVER ID-EM
 
 let allData = [];
 let currentFilter = 'online'; 
@@ -297,36 +385,39 @@ function switchTab(tabId, btn) {
   document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
   document.getElementById(tabId).classList.add('active');
   btn.classList.add('active');
+  
+  if (tabId === 'tab-admin') osveziLogove();
 }
 
 document.addEventListener('click', () => {
   document.querySelectorAll('.faction-menu').forEach(m => m.style.display = 'none');
 });
 
+// GLAVNO UCITAVANJE SVIH PODATAKA
 async function load() {
   try {
-    const [l, h, f] = await Promise.all([
-      fetch(WORKER), 
-      fetch(WORKER + "history"),
-      fetch(WORKER + "factions")
+    const [l, h, f, sadnjeRes, sefRes] = await Promise.all([
+      fetch(WORKER).catch(() => ({json: () => ({})})), 
+      fetch(WORKER + "history").catch(() => ({json: () => ({})})),
+      fetch(WORKER + "factions").catch(() => ({json: () => ({ sheriffs: [], pirates: [], blacks: [], mexicans: [] })})),
+      fetch(WORKER + "sadnje").catch(() => ({json: () => []})),
+      fetch(WORKER + "sef").catch(() => ({json: () => ({})}))
     ]);
     
+    // 1. Igraci & Frakcije
     const live = await l.json();
     const hist = await h.json();
-    factionData = await f.json().catch(() => ({ sheriffs: [], pirates: [], blacks: [], mexicans: [] }));
+    factionData = await f.json();
 
     const livePlayers = (live.players || []).map(p => ({...p, online: true}));
     const histPlayers = (hist.players || []).map(p => ({...p, online: false}));
-
     const merged = {};
     livePlayers.forEach(p => merged[p.name] = p);
     histPlayers.forEach(p => { if(!merged[p.name]) merged[p.name] = p; });
-
     allData = Object.values(merged);
     
     document.getElementById("count-online").textContent = livePlayers.length;
     document.getElementById("count-history").textContent = allData.length;
-    
     document.getElementById("count-sheriffs-btn").textContent = (factionData.sheriffs || []).length;
     document.getElementById("count-pirates-btn").textContent = (factionData.pirates || []).length;
     document.getElementById("count-blacks-btn").textContent = (factionData.blacks || []).length;
@@ -335,9 +426,70 @@ async function load() {
     const now = new Date();
     document.getElementById("updated-tag").textContent = `Osveženo: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
     
+    // 2. Sadnje
+    const sadnje = await sadnjeRes.json();
+    const filtriraneSadnje = (Array.isArray(sadnje) ? sadnje : []).filter(s => s.guild_id == MY_GUILD);
+    const sadnjeCont = document.getElementById("sadnje-container");
+    
+    if(filtriraneSadnje.length === 0) {
+      sadnjeCont.innerHTML = "<p style='color:var(--muted); font-size:14px;'>Trenutno nema aktivnih sadnji.</p>";
+    } else {
+      sadnjeCont.innerHTML = filtriraneSadnje.map(s => {
+          const start = new Date(s.vreme_sadnje).getTime();
+          const end = new Date(s.vreme_branja).getTime();
+          let prog = Math.min(((Date.now() - start) / (end - start)) * 100, 100);
+          if (prog < 0) prog = 0;
+          const procenat = Math.round(prog);
+
+          const preostaloMs = end - Date.now();
+          let preostaloTekst;
+          if (preostaloMs <= 0) {
+              preostaloTekst = "Spremno za berbu!";
+          } else {
+              const h = Math.floor(preostaloMs / 3600000);
+              const m = Math.floor((preostaloMs % 3600000) / 60000);
+              preostaloTekst = h > 0 ? `Još: ${h}h ${m}m` : `Još: ${m}m`;
+          }
+
+          const avatarSrc = s.avatar_url || "https://cdn.discordapp.com/embed/avatars/0.png";
+          const mediaHtml = s.image_url
+              ? `<img src="${s.image_url}" class="sadnja-img" alt="Sadnja ${s.kultura}" onerror="this.remove();">`
+              : `<div class="sadnja-media-empty">🌱</div>`;
+
+          return `
+          <div class="sadnja-card">
+              <div class="sadnja-media">
+                  ${mediaHtml}
+                  <div class="sadnja-media-overlay"></div>
+                  <div class="sadnja-kultura-badge">🌿 ${s.kultura.toUpperCase()}</div>
+                  <div class="sadnja-header">
+                      <img src="${avatarSrc}" class="sadnja-avatar" alt="${s.username}">
+                      <div class="sadnja-username">${s.username}</div>
+                  </div>
+              </div>
+              <div class="sadnja-body">
+                  <div class="sadnja-status-row">
+                      <span>Status:</span>
+                      <span class="sadnja-status-time">${preostaloTekst}</span>
+                  </div>
+                  <div class="progress-bg">
+                      <div class="progress-fill" style="width:${prog}%;"></div>
+                  </div>
+                  <div class="progress-percent">${procenat}%</div>
+              </div>
+          </div>`;
+      }).join("");
+    }
+
+    // 3. Sef Public
+    const sef = await sefRes.json();
+    if(sef[MY_GUILD]) {
+        document.getElementById("sef-display").innerText = "Sef: $" + sef[MY_GUILD].stanje.toLocaleString();
+    }
+    
     render();
     renderFactionPanels();
-  } catch(e) { console.error(e); }
+  } catch(e) { console.error("Greška pri povlačenju podataka", e); }
 }
 
 function setFilter(f) {
@@ -421,32 +573,134 @@ function toggleMenu(e, name) {
   menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
 }
 
-function loginAdmin() {
+let isSuperAdmin = false; // true samo ako je unesena posebna (sef) lozinka
+
+async function loginAdmin() {
   const passInput = document.getElementById('pass-input');
-  
-  if (passInput.value === "777") {
-    savedPassword = passInput.value;
-    passInput.value = '';
-    document.getElementById('lock-zone').style.display = 'none';
-    document.getElementById('logout-zone').style.display = 'block';
-    document.getElementById('panel-label').textContent = "Upravljanje listama";
-    render();
-    renderFactionPanels();
-  } else {
-    alert("Pogrešna lozinka!");
-    passInput.value = '';
+  const uneto = passInput.value;
+  passInput.value = '';
+
+  if (!uneto) return;
+
+  // Nivo 1: obična lozinka -> samo upravljanje frakcijama/listama
+  if (uneto === "777") {
+    savedPassword = uneto;
+    isSuperAdmin = false;
+    otkljucajOsnovno();
+    document.getElementById('nav-admin').style.display = 'none'; // ova lozinka NE otvara sef logove
+    return;
   }
+
+  // Nivo 2: pokušaj kao posebna admin lozinka -> otvara Sef Logove + izmenu stanja
+  // Validacija ide preko servera (worker proverava ADMIN_PASSWORD), pa "777" ovde nikad ne prolazi.
+  try {
+    const res = await fetch(WORKER + "admin_logs", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: uneto, guild_id: MY_GUILD })
+    });
+
+    if (res.ok) {
+      savedPassword = uneto;
+      isSuperAdmin = true;
+      otkljucajOsnovno();
+      document.getElementById('nav-admin').style.display = 'block';
+      switchTab('tab-admin', document.getElementById('nav-admin'));
+      osveziLogove();
+      return;
+    }
+  } catch (e) {
+    console.error(e);
+  }
+
+  alert("Pogrešna lozinka!");
 }
 
-function logoutAdmin() {
-  savedPassword = "";
-  document.getElementById('lock-zone').style.display = 'flex';
-  document.getElementById('logout-zone').style.display = 'none';
-  document.getElementById('panel-label').textContent = "Frakcije (Pregled)";
+function otkljucajOsnovno() {
+  document.getElementById('lock-zone').style.display = 'none';
+  document.getElementById('logout-zone').style.display = 'block';
+  document.getElementById('panel-label').textContent = "Upravljanje listama";
   render();
   renderFactionPanels();
 }
 
+function logoutAdmin() {
+  savedPassword = "";
+  isSuperAdmin = false;
+  document.getElementById('lock-zone').style.display = 'flex';
+  document.getElementById('logout-zone').style.display = 'none';
+  document.getElementById('panel-label').textContent = "Frakcije (Pregled)";
+  
+  // Sakrij Admin Tab i prebaci nazad na Igrace
+  const adminTab = document.getElementById('nav-admin');
+  adminTab.style.display = 'none';
+  if (adminTab.classList.contains('active')) {
+      switchTab('tab-id', document.querySelector('.nav-tab'));
+  }
+  
+  render();
+  renderFactionPanels();
+}
+
+// LOGOVI SEFA I FORSIRANJE IZMENE (Zaštićeno šifrom)
+async function osveziLogove() {
+    if(!savedPassword || !isSuperAdmin) return;
+    try {
+        const res = await fetch(WORKER + "admin_logs", {
+            method: "POST",
+            body: JSON.stringify({ password: savedPassword, guild_id: MY_GUILD }),
+            headers: { "Content-Type": "application/json" }
+        });
+        if(res.ok) {
+            const data = await res.json();
+            
+            document.getElementById("admin-stanje").innerText = "$" + data.stanje.toLocaleString();
+            document.getElementById("sef-display").innerText = "Sef: $" + data.stanje.toLocaleString();
+
+            const tbody = document.getElementById("logovi-body");
+            if (!data.logovi || data.logovi.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--muted);">Nema zabeleženih transakcija.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.logovi.map(l => {
+                const date = new Date(l.vreme).toLocaleString("sr-RS");
+                let actionClass = l.akcija === "IN" ? "in" : (l.akcija === "OUT" ? "out" : "edit");
+                let actionText = l.akcija === "IN" ? "[IN] UPLATA" : (l.akcija === "OUT" ? "[OUT] ISPLATA" : "[EDIT] IZMENA");
+                let pre = l.akcija === "IN" ? "+" : (l.akcija === "OUT" ? "-" : "");
+                const sumnjivo = l.obrisano === true;
+
+                return `<tr${sumnjivo ? ' style="background: rgba(239,68,68,0.12);"' : ''}>
+                    <td>${date}${sumnjivo ? '<br><span style="color:#ef4444; font-size:11px; font-weight:700;">🚨 OBRISANA PORUKA — SUMNJA NA KRAĐU</span>' : ''}</td>
+                    <td class="${actionClass}">${actionText}</td>
+                    <td>${l.izvrsilac}</td>
+                    <td class="${actionClass}">${pre}$${l.iznos.toLocaleString()}</td>
+                </tr>`;
+            }).join("");
+        }
+    } catch(e) { console.error(e); }
+}
+
+async function azurirajSef() {
+    if(!savedPassword || !isSuperAdmin) return;
+    const noviIznos = parseInt(document.getElementById('novo-stanje').value);
+    if (isNaN(noviIznos)) return alert("Unesi validan broj!");
+    
+    try {
+        await fetch(WORKER + "admin_edit", {
+            method: "POST",
+            body: JSON.stringify({ password: savedPassword, guild_id: MY_GUILD, novo_stanje: noviIznos }),
+            headers: { "Content-Type": "application/json" }
+        });
+        
+        document.getElementById('novo-stanje').value = "";
+        alert("Sef je uspešno ažuriran! Promena će se sinhronizovati sa Discord botom.");
+        osveziLogove();
+    } catch(e) { alert("Greška pri spajanju."); }
+}
+
+
+// Upravljanje Frakcijama (API Pozivi)
 async function addMember(faction, customName) {
   let name = customName;
   if (!name) {
@@ -541,7 +795,7 @@ function renderFactionPanels() {
   }
 }
 
-/* NOVA FUNKCIJA: Brzo osvežavanje In-Game Vremena */
+/* Brzo osvežavanje In-Game Vremena */
 function brzoOsveziVreme() {
   const sada = new Date();
   const irlSati = sada.getHours();
@@ -568,10 +822,7 @@ function brzoOsveziVreme() {
   const pocetneInGameMinute = 6 * 60; 
   
   let inGameUkupnoMinuta = pocetneInGameMinute + (prosloStvarnihMinuta * 10) - 10;
-
-  if (inGameUkupnoMinuta < 0) {
-      inGameUkupnoMinuta += 24 * 60;
-  }
+  if (inGameUkupnoMinuta < 0) inGameUkupnoMinuta += 24 * 60;
 
   const inGameSati = Math.floor((inGameUkupnoMinuta / 60) % 24);
   const inGameMinuti = Math.floor(inGameUkupnoMinuta % 60);
@@ -579,15 +830,11 @@ function brzoOsveziVreme() {
   const formatiraniSati = String(inGameSati).padStart(2, '0');
   const formatiraniMinuti = String(inGameMinuti).padStart(2, '0');
 
-  // Osveži tekst u meniju
   const timeElement = document.getElementById('quick-ig-time');
   timeElement.innerText = `${formatiraniSati}:${formatiraniMinuti}`;
   
-  // Efekat za potvrdu klika
   timeElement.style.color = "var(--green)";
-  setTimeout(() => {
-    timeElement.style.color = "var(--accent)";
-  }, 300);
+  setTimeout(() => { timeElement.style.color = "var(--accent)"; }, 300);
 }
 
 /* Skripte za Kalkulator Rude */
@@ -622,13 +869,14 @@ document.getElementById('pass-input').addEventListener('keypress', function(e) {
 
 document.getElementById("search").oninput = render;
 
-// Pokrećemo vreme odmah na početku
+// Inicijalizacija
 brzoOsveziVreme();
-// I za svaki slučaj neka se auto-update-uje svakih 10 sekundi ako korisnik zaboravi da klikne
 setInterval(brzoOsveziVreme, 10000);
-
 load();
-setInterval(load, 20000);
+setInterval(() => {
+    load();
+    if(document.getElementById('tab-admin').classList.contains('active')) osveziLogove();
+}, 20000);
 </script>
 </body>
 </html>
