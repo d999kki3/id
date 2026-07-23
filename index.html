@@ -312,6 +312,9 @@
           <button class="fbtn" onclick="setFilter('mexicans')" id="btn-mexicans">
             Meksikanci <span class="fbtn-count" id="count-mexicans-btn">0</span>
           </button>
+          <button class="fbtn" onclick="setFilter('vendete')" id="btn-vendete">
+            Vendete <span class="fbtn-count" id="count-vendete-btn">0</span>
+          </button>
         </div>
       </div>
 
@@ -415,7 +418,7 @@ const MY_GUILD = "1494842502510022747";
 
 let allData = [];
 let currentFilter = 'online'; 
-let factionData = { sheriffs: [], pirates: [], blacks: [], mexicans: [] };
+let factionData = { sheriffs: [], pirates: [], blacks: [], mexicans: [], vendete: [] };
 let savedPassword = "";
 
 function switchTab(tabId, btn) {
@@ -447,7 +450,7 @@ async function load() {
     const [l, h, f, sadnjeRes, sefRes] = await Promise.all([
       fetch(WORKER).catch(() => ({json: () => ({})})), 
       fetch(WORKER + "history").catch(() => ({json: () => ({})})),
-      fetch(WORKER + "factions").catch(() => ({json: () => ({ sheriffs: [], pirates: [], blacks: [], mexicans: [] })})),
+      fetch(WORKER + "factions").catch(() => ({json: () => ({ sheriffs: [], pirates: [], blacks: [], mexicans: [], vendete: [] })})),
       fetch(WORKER + "sadnje").catch(() => ({json: () => []})),
       fetch(WORKER + "sef").catch(() => ({json: () => ({})}))
     ]);
@@ -469,6 +472,7 @@ async function load() {
     document.getElementById("count-pirates-btn").textContent = (factionData.pirates || []).length;
     document.getElementById("count-blacks-btn").textContent = (factionData.blacks || []).length;
     document.getElementById("count-mexicans-btn").textContent = (factionData.mexicans || []).length;
+    document.getElementById("count-vendete-btn").textContent = (factionData.vendete || []).length;
     
     const now = new Date();
     document.getElementById("updated-tag").textContent = `Osveženo: ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
@@ -539,7 +543,7 @@ async function load() {
 
 function setFilter(f) {
   currentFilter = f;
-  const filters = ['online', 'history', 'sheriffs', 'pirates', 'blacks', 'mexicans'];
+  const filters = ['online', 'history', 'sheriffs', 'pirates', 'blacks', 'mexicans', 'vendete'];
   filters.forEach(filter => {
     document.getElementById(`btn-${filter}`).classList.toggle('active', f === filter);
   });
@@ -585,7 +589,7 @@ function render() {
   }
 
   body.innerHTML = list.map(p => `
-    <div class="row" onclick="navigator.clipboard.writeText('${p.name}')" style="cursor: pointer; ${['sheriffs', 'pirates', 'blacks', 'mexicans'].includes(currentFilter) && !p.online ? 'opacity: 0.5;' : ''}">
+    <div class="row" onclick="navigator.clipboard.writeText('${p.name}')" style="cursor: pointer; ${['sheriffs', 'pirates', 'blacks', 'mexicans', 'vendete'].includes(currentFilter) && !p.online ? 'opacity: 0.5;' : ''}">
       <div class="row-id">${p.id || "—"}</div>
       <div class="row-name">${p.name}</div>
       <div class="row-status">${p.online ? '<span class="badge-online">Online</span>' : '<span style="color:var(--muted); font-size:11px; font-weight:500;">Offline</span>'}</div>
@@ -601,6 +605,7 @@ function render() {
               <button onclick="addMember('pirates', '${p.name}')">Pirati</button>
               <button onclick="addMember('blacks', '${p.name}')">Crnci</button>
               <button onclick="addMember('mexicans', '${p.name}')">Meksikanci</button>
+              <button onclick="addMember('vendete', '${p.name}')">Vendete</button>
             </div>
           </div>
         ` : ''}
@@ -789,7 +794,8 @@ function renderFactionPanels() {
     { id: 'sheriffs', name: 'Šerifi' },
     { id: 'pirates', name: 'Pirati' },
     { id: 'blacks', name: 'Crnci' },
-    { id: 'mexicans', name: 'Meksikanci' }
+    { id: 'mexicans', name: 'Meksikanci' },
+    { id: 'vendete', name: 'Vendete' }
   ];
 
   container.innerHTML = factions.map(f => {
