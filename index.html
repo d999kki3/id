@@ -257,6 +257,7 @@
       <button class="nav-tab" onclick="switchTab('tab-calc', this)">Kalkulator Rude</button>
       <button class="nav-tab" onclick="switchTab('tab-sadnje', this)">Sadnje</button>
       <button class="nav-tab" id="nav-admin" style="display: none;" onclick="switchTab('tab-admin', this)">Sef Logovi 🔒</button>
+      <button class="nav-tab" id="nav-finansije" style="display: none;" onclick="switchTab('tab-finansije', this)">Finansije 🔒</button>
     </div>
     <div id="updated-tag">Osvežavanje...</div>
   </div>
@@ -407,6 +408,28 @@
   </div>
 </div>
 
+<div id="tab-finansije" class="tab-content">
+  <div class="custom-page-container">
+    <div class="custom-card">
+      <h2>Finansije Klana (Uplate / Isplate)</h2>
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th>Datum i Vreme</th>
+            <th>Akcija</th>
+            <th>Izvršilac</th>
+            <th>Frakcija</th>
+            <th>Iznos</th>
+          </tr>
+        </thead>
+        <tbody id="finansije-logovi-body">
+          <tr><td colspan="5" style="text-align: center; color: var(--muted);">Učitavanje logova...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 <div id="image-modal" class="image-modal" onclick="closeImageModal()">
   <div class="close-modal" onclick="closeImageModal()"><span>IZAĐI</span> &times;</div>
   <img class="image-modal-content" id="enlarged-img" onclick="event.stopPropagation();">
@@ -428,6 +451,7 @@ function switchTab(tabId, btn) {
   btn.classList.add('active');
   
   if (tabId === 'tab-admin') osveziLogove();
+  if (tabId === 'tab-finansije') osveziFinansijeLogove();
 }
 
 document.addEventListener('click', () => {
@@ -651,10 +675,12 @@ async function loginAdmin() {
 
     if (isSuperAdmin) {
       document.getElementById('nav-admin').style.display = 'block';
+      document.getElementById('nav-finansije').style.display = 'block';
       switchTab('tab-admin', document.getElementById('nav-admin'));
       osveziLogove();
     } else {
       document.getElementById('nav-admin').style.display = 'none';
+      document.getElementById('nav-finansije').style.display = 'none';
     }
   } catch (e) {
     console.error(e);
@@ -679,7 +705,8 @@ function logoutAdmin() {
   
   const adminTab = document.getElementById('nav-admin');
   adminTab.style.display = 'none';
-  if (adminTab.classList.contains('active')) {
+  document.getElementById('nav-finansije').style.display = 'none';
+  if (adminTab.classList.contains('active') || document.getElementById('tab-finansije').classList.contains('active')) {
       switchTab('tab-id', document.querySelector('.nav-tab'));
   }
   
@@ -718,6 +745,41 @@ async function osveziLogove() {
                     <td>${date}${sumnjivo ? '<br><span style="color:#ef4444; font-size:11px; font-weight:700;">🚨 OBRISANA PORUKA — SUMNJA NA KRAĐU</span>' : ''}</td>
                     <td class="${actionClass}">${actionText}</td>
                     <td>${l.izvrsilac}</td>
+                    <td class="${actionClass}">${pre}$${l.iznos.toLocaleString()}</td>
+                </tr>`;
+            }).join("");
+        }
+    } catch(e) { console.error(e); }
+}
+
+async function osveziFinansijeLogove() {
+    if(!savedPassword || !isSuperAdmin) return;
+    try {
+        const res = await fetch(WORKER + "finansije_logs", {
+            method: "POST",
+            body: JSON.stringify({ password: savedPassword, guild_id: MY_GUILD }),
+            headers: { "Content-Type": "application/json" }
+        });
+        if(res.ok) {
+            const data = await res.json();
+            const tbody = document.getElementById("finansije-logovi-body");
+            if (!data.logovi || data.logovi.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--muted);">Nema zabeleženih transakcija.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.logovi.map(l => {
+                const date = new Date(l.vreme).toLocaleString("sr-RS");
+                let actionClass = l.akcija === "IN" ? "in" : "out";
+                let actionText = l.akcija === "IN" ? "[IN] UPLATA" : "[OUT] ISPLATA";
+                let pre = l.akcija === "IN" ? "+" : "-";
+                const sumnjivo = l.obrisano === true;
+
+                return `<tr${sumnjivo ? ' style="background: rgba(239,68,68,0.12);"' : ''}>
+                    <td>${date}${sumnjivo ? '<br><span style="color:#ef4444; font-size:11px; font-weight:700;">🚨 OBRISANA PORUKA — SUMNJA NA KRAĐU</span>' : ''}</td>
+                    <td class="${actionClass}">${actionText}</td>
+                    <td>${l.izvrsilac}</td>
+                    <td>${l.frakcija || ''}</td>
                     <td class="${actionClass}">${pre}$${l.iznos.toLocaleString()}</td>
                 </tr>`;
             }).join("");
@@ -924,6 +986,7 @@ load();
 setInterval(() => {
     load();
     if(document.getElementById('tab-admin').classList.contains('active')) osveziLogove();
+    if(document.getElementById('tab-finansije').classList.contains('active')) osveziFinansijeLogove();
 }, 20000);
 </script>
 </body>
